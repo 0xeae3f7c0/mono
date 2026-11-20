@@ -1,0 +1,5 @@
+Self-maintaining GitHub repository toolkit (monorepo)
+Rust: crates/ (cli, core, git, report)
+Go: go/ (activity tool)
+Web: web/status-worker (Cloudflare Worker)
+Automation: GitHub Actions

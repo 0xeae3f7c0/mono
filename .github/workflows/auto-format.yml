@@ -1,0 +1,48 @@
+name: Auto Format
+
+# Formats main after every push and commits the result only when rustfmt
+# changes tracked files. Pushes with OWNER_TOKEN so CI runs on the commit
+# (pushes made with GITHUB_TOKEN do not trigger workflows). The follow-up push
+# produces no diff, so this does not loop.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: auto-format
+  cancel-in-progress: false
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.OWNER_TOKEN || secrets.GITHUB_TOKEN }}
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - name: Apply formatting
+        run: cargo fmt --all
+      - name: Commit if changed
+        env:
+          GH_TOKEN: ${{ secrets.OWNER_TOKEN }}
+        run: |
+          if git diff --quiet; then
+            echo "Already formatted."
+            exit 0
+          fi
+          if [ -n "$GH_TOKEN" ]; then
+            bash scripts/owner-identity.sh
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          fi
+          git commit -am "style: apply cargo fmt"
+          git pull --rebase origin main
+          git push origin HEAD:main

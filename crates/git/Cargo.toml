@@ -1,0 +1,12 @@
+[package]
+name = "commit-git"
+description = "Git helpers for the commit toolkit"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+thiserror.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true

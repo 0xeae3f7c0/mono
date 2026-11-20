@@ -1,0 +1,14 @@
+image:
+  registry: ghcr.io/OWNER/commit
+  tag: latest
+
+services:
+  events-api:
+    port: 3000
+    replicas: 1
+  webhooks:
+    port: 8080
+    replicas: 2
+  badges:
+    port: 8081
+    replicas: 1

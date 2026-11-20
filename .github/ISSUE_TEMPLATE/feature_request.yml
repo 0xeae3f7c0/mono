@@ -1,0 +1,26 @@
+name: Feature request
+description: Propose a new capability or an improvement
+title: "[Feature]: "
+labels: ["kind/feature", "status/needs-triage", "source/human"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What are you trying to do, and what gets in the way today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: What should change? Name the project (`app/<name>`) if you know it.
+    validations:
+      required: true
+  - type: dropdown
+    id: effort
+    attributes:
+      label: Rough size
+      options: ["effort/xs", "effort/s", "effort/m", "effort/l", "Not sure"]
+    validations:
+      required: false

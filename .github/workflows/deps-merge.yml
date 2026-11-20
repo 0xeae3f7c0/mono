@@ -1,0 +1,38 @@
+name: Merge Waiting Dependency PRs
+
+# Daily: merges kind/deps pull requests that have waited longer than
+# max_age_hours with no failing checks (pending checks are bypassed).
+# Majors and PRs with failing checks are left for review.
+# Requires OWNER_TOKEN from a repository admin for the --admin bypass.
+
+on:
+  schedule:
+    - cron: "37 7 * * *"
+  workflow_dispatch:
+    inputs:
+      max_age_hours:
+        description: Merge PRs older than this many hours
+        default: "3"
+      dry_run:
+        description: Only report what would be merged
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: repository-maintenance
+  cancel-in-progress: false
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash scripts/merge-stale-deps.sh
+        env:
+          GH_TOKEN: ${{ secrets.OWNER_TOKEN }}
+          MAX_AGE_HOURS: ${{ inputs.max_age_hours || '3' }}
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}

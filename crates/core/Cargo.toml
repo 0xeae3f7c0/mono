@@ -1,0 +1,18 @@
+[package]
+name = "commit-core"
+description = "Repository validation rules for the commit toolkit"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+serde.workspace = true
+toml.workspace = true
+walkdir.workspace = true
+commit-report.workspace = true
+serde_yaml_ng.workspace = true
+regex.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true

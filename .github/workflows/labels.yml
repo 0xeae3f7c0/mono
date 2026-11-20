@@ -1,0 +1,27 @@
+name: Labels
+
+# Keeps repository labels in sync with scripts/labels.mjs (`<group>/<name>`
+# labels, plus one `app/<project>` label per project).
+
+on:
+  push:
+    branches: [main]
+    paths: ["scripts/labels.mjs", "pkgs/**", ".github/workflows/labels.yml"]
+  schedule:
+    - cron: "13 5 * * 1"
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: node scripts/labels.mjs --sync
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

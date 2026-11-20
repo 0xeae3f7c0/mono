@@ -1,0 +1,5 @@
+apiVersion: v2
+name: commit
+description: Self-hosted engineering-activity platform (events-api, webhooks, badges)
+version: 0.1.0
+appVersion: "0.1.0"

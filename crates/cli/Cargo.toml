@@ -1,0 +1,25 @@
+[package]
+name = "commit"
+description = "A self-maintaining GitHub repository automation toolkit"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "commit"
+path = "src/main.rs"
+
+[dependencies]
+anyhow.workspace = true
+clap.workspace = true
+commit-core.workspace = true
+commit-git.workspace = true
+commit-report.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+
+[dev-dependencies]
+assert_cmd.workspace = true
+predicates.workspace = true
+serde_json.workspace = true
+tempfile.workspace = true

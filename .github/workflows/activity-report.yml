@@ -1,0 +1,36 @@
+name: Activity Report
+
+# Daily summary of commits per author over the last 24 hours, written to the job summary.
+
+on:
+  schedule:
+    - cron: "55 23 * * *"
+  workflow_dispatch:
+    inputs:
+      since:
+        description: Time window (Go duration, e.g. 24h, 168h)
+        default: 24h
+
+permissions:
+  contents: read
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go/go.mod
+      - name: Summarize activity
+        working-directory: go
+        env:
+          SINCE: ${{ inputs.since || '24h' }}
+        run: |
+          {
+            echo '```'
+            go run ./cmd/activity -repo .. -since "$SINCE"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

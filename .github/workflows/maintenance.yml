@@ -1,0 +1,82 @@
+name: Repository Maintenance
+
+# Daily, scans every Cargo, Go and npm project in the repository
+# (root, go/, web/ and pkgs/*) and opens one PR per dependency with a
+# newer release. Each PR auto-merges
+# (rebase) once required checks pass. A single tracking issue stays open while
+# runs fail.
+#
+# Requires OWNER_TOKEN (owner PAT with `repo` scope): PRs opened with the
+# default GITHUB_TOKEN do not trigger CI, so required checks would never run.
+
+on:
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: repository-maintenance
+  cancel-in-progress: false
+
+env:
+  FAILURE_TITLE: "chore(deps): automated maintenance failing"
+
+jobs:
+  maintenance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.OWNER_TOKEN }}
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go/go.mod
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Configure owner identity
+        env:
+          GH_TOKEN: ${{ secrets.OWNER_TOKEN }}
+        run: bash scripts/owner-identity.sh
+      - name: Open one PR per updated package
+        env:
+          GH_TOKEN: ${{ secrets.OWNER_TOKEN }}
+          BASE: ${{ github.event.repository.default_branch }}
+        run: bash scripts/update-deps.sh
+
+  track-failure:
+    needs: maintenance
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        env:
+          RESULT: ${{ needs.maintenance.result }}
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const title = process.env.FAILURE_TITLE;
+            const runUrl = `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`;
+            const open = await github.paginate(github.rest.issues.listForRepo,
+              { owner, repo, state: 'open', labels: 'source/maintenance', per_page: 100 });
+            const issue = open.find(i => i.title === title && !i.pull_request);
+
+            if (process.env.RESULT === 'failure') {
+              const body = `Maintenance run failed: ${runUrl}`;
+              if (issue) {
+                await github.rest.issues.createComment({ owner, repo, issue_number: issue.number, body });
+              } else {
+                await github.rest.issues.create({ owner, repo, title, body, labels: ['kind/chore', 'source/maintenance', 'priority/high'] });
+              }
+            } else if (process.env.RESULT === 'success' && issue) {
+              await github.rest.issues.createComment({ owner, repo, issue_number: issue.number,
+                body: `Resolved by ${runUrl}` });
+              await github.rest.issues.update({ owner, repo, issue_number: issue.number, state: 'closed' });
+            }

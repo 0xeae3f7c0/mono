@@ -1,0 +1,12 @@
+# Cargo, Go and npm version updates come from scripts/update-deps.sh (maintenance.yml),
+# one PR per package; Dependabot security alerts still cover them.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 10
+    labels: [kind/deps, area/ci, source/dependabot]
+    commit-message:
+      prefix: "ci(deps)"
