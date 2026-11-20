@@ -15,7 +15,7 @@ const pkgs = readdirSync("pkgs", { withFileTypes: true }).filter((d) => d.isDire
 
 // Extra apt packages some Rust projects need on ubuntu-latest.
 const apt = {
-  visualizer: "libasound2-dev libudev-dev",
+  visualizer: "pkg-config libasound2-dev libudev-dev libwayland-dev libxkbcommon-dev libx11-dev",
   desktop: "libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev libxdo-dev",
 };
 
@@ -93,7 +93,7 @@ function workflow(name) {
     "",
     "concurrency:",
     `  group: pkg-${name}-\${{ github.ref }}`,
-    "  cancel-in-progress: true",
+    "  cancel-in-progress: ${{ github.event_name == 'pull_request' }}",
     "",
     "jobs:",
     "  test:",

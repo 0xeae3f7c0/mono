@@ -15,9 +15,12 @@ permissions:
   contents: read
   security-events: write
 
+# Never cancel a running scan: the Rust scan takes longer than the gap between
+# pushes, so cancelling meant scans almost never finished. GitHub keeps at most
+# one run waiting behind it.
 concurrency:
   group: codeql-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   analyze:
