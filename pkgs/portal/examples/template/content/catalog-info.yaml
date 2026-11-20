@@ -1,0 +1,9 @@
+# portal: Developer portal cataloguing every service here (commit platform, pkgs/portal)
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: ${{ values.name | dump }}
+spec:
+  type: service
+  owner: user:guest
+  lifecycle: experimental

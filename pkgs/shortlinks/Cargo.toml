@@ -1,0 +1,12 @@
+# shortlinks: Short links for shared reports (commit platform, pkgs/shortlinks)
+[package]
+name = "shortlinks"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+publish = false
+
+[dependencies]
+rocket = { version = "0.5.4", features = ["json"] }
+
+[workspace]

@@ -1,0 +1,6 @@
+{
+  "name": "${{ values.name }}",
+  "private": true,
+  "dependencies": {},
+  "description": "Backstage developer portal cataloguing every commit service"
+}

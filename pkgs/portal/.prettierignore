@@ -1,0 +1,5 @@
+# portal: Developer portal cataloguing every service here (commit platform, pkgs/portal)
+dist
+dist-types
+coverage
+.vscode

@@ -1,0 +1,9 @@
+// admin-api: Team and repository ownership API for the commit admin console (NestJS) (pkgs/admin-api)
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "./src"
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "test", "dist", "**/*spec.ts"]
+}
