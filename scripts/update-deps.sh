@@ -3,7 +3,7 @@
 # auto-merging PR per dependency version that is newer than the locked one:
 #   - Cargo: each locked package `cargo update --dry-run` would change
 #   - Go:    each direct module with an update (`go get <mod>@<new>`)
-#   - npm:   each direct dependency behind its latest release
+#   - npm:   each direct dependency whose locked version is behind the latest release
 #
 # Each PR targets one exact version (branch deps/<project>/<eco>-<pkg>-<version>).
 # When a newer version appears while an older PR for the same dependency is
@@ -112,9 +112,14 @@ for dir in $(projects go.mod); do
 done
 
 for dir in $(projects package-lock.json); do
-  # npm outdated exits 1 when anything is outdated.
-  changes=$(cd "$dir" && { npm outdated --json || true; } |
-    jq -r 'to_entries[] | select(.value.current != null and .value.current != .value.latest) | "\(.key) \(.value.current) \(.value.latest)"')
+  # Current versions come from the lockfile (CI has no node_modules, so
+  # `npm outdated` would report nothing); latest comes from the registry.
+  changes=$(jq -r '.packages[""] | ((.dependencies // {}) + (.devDependencies // {})) | keys[]' "$dir/package-lock.json" |
+    while read -r pkg; do
+      old=$(jq -r --arg p "node_modules/$pkg" '.packages[$p].version // empty' "$dir/package-lock.json")
+      new=$(npm view "$pkg" version 2>/dev/null) || continue
+      [[ -n "$old" && -n "$new" && "$old" != "$new" ]] && echo "$pkg $old $new"
+    done)
   while read -r pkg old new; do
     [[ -n "$pkg" ]] || continue
     dev=$(jq -r --arg p "$pkg" 'if .devDependencies[$p] then "--save-dev" else "--save" end' "$dir/package.json")
