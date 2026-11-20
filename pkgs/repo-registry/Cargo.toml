@@ -1,0 +1,13 @@
+# repo-registry: Which repositories are tracked (commit platform, pkgs/repo-registry)
+[package]
+name = "repo-registry"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+publish = false
+
+[dependencies]
+sea-orm = { version = "2.0.4", features = ["sqlx-sqlite", "runtime-tokio-rustls", "macros"] }
+tokio = { version = "1.54.1", features = ["full"] }
+
+[workspace]

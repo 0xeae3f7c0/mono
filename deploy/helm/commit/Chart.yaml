@@ -1,3 +1,4 @@
+# deploy: Helm chart for the commit platform services
 apiVersion: v2
 name: commit
 description: Self-hosted engineering-activity platform (events-api, webhooks, badges)

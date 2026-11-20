@@ -1,0 +1,12 @@
+# visualizer: "Office TV" view of author activity (commit platform, pkgs/visualizer)
+[package]
+name = "visualizer"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+publish = false
+
+[dependencies]
+bevy = "0.20.1"
+
+[workspace]

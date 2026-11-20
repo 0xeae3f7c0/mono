@@ -1,0 +1,13 @@
+# badges: README badges (SVG) (commit platform, pkgs/badges)
+[package]
+name = "badges"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+publish = false
+
+[dependencies]
+actix-web = "4.20.0"
+serde = { version = "1.0.229", features = ["derive"] }
+
+[workspace]

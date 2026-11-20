@@ -1,3 +1,4 @@
+# deploy: Helm chart for the commit platform services
 image:
   registry: ghcr.io/0xeae3f7c0/mono
   tag: latest

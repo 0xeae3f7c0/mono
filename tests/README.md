@@ -1,3 +1,4 @@
+<!-- repository tests guide -->
 # Tests
 
 - Rust unit tests live next to each crate in `crates/*/src`.
