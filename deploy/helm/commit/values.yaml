@@ -1,5 +1,5 @@
 image:
-  registry: ghcr.io/OWNER/commit
+  registry: ghcr.io/0xeae3f7c0/mono
   tag: latest
 
 services:

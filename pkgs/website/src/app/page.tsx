@@ -20,7 +20,7 @@ export default function Home() {
         ))}
       </ul>
       <p>
-        <a href="https://github.com/OWNER/commit">Source on GitHub</a>
+        <a href="https://github.com/0xeae3f7c0/mono">Source on GitHub</a>
       </p>
     </main>
   );
