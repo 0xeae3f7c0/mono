@@ -104,7 +104,8 @@ for dir in $(projects Cargo.lock); do
 done
 
 for dir in $(projects go.mod); do
-  changes=$(cd "$dir" && go list -m -u -f '{{if and (not .Main) (not .Indirect) .Update}}{{.Path}} {{.Version}} {{.Update.Version}}{{end}}' all)
+  changes=$(cd "$dir" && go list -m -u -f '{{if and (not .Main) (not .Indirect) .Update}}{{.Path}} {{.Version}} {{.Update.Version}}{{end}}' all) ||
+    { echo "::warning::Skipping $dir: go list failed"; continue; }
   while read -r mod old new; do
     [[ -n "$mod" ]] || continue
     propose "$dir" go "$mod" "$old" "$new" go sh -c "go get '$mod@$new' && go mod tidy"

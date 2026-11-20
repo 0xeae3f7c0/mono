@@ -35,9 +35,12 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.OWNER_TOKEN }}
       - uses: dtolnay/rust-toolchain@stable
+      # Latest stable Go: the script updates every Go module, and pkgs/* require
+      # newer Go than go/go.mod.
       - uses: actions/setup-go@v7
         with:
-          go-version-file: go/go.mod
+          go-version: stable
+          cache: false
       - uses: actions/setup-node@v7
         with:
           node-version: 24
