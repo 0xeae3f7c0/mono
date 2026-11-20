@@ -30,7 +30,7 @@ jobs:
         run: |
           mkdir dist
           cp "target/${{ matrix.target }}/release/commit${{ matrix.ext }}" "dist/commit-${{ matrix.target }}${{ matrix.ext }}"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: commit-${{ matrix.target }}
           path: dist/*
