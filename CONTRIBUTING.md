@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for helping improve `commit`.
+Thanks for helping improve `commit`. See [`doc/README.md`](doc/README.md) for the layout, automation and repository settings.
 
 ## Requirements
 
