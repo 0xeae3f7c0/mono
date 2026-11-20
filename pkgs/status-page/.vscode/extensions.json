@@ -1,5 +1,0 @@
-// status-page: commit platform public status page (Astro) (pkgs/status-page)
-{
-  "recommendations": ["astro-build.astro-vscode"],
-  "unwantedRecommendations": []
-}

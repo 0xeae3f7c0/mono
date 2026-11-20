@@ -1,4 +1,0 @@
-# helm-render: Renders `deploy/helm/commit` for review (commit platform, pkgs/helm-render)
-apiVersion: v2
-name: web
-version: 0.1.0

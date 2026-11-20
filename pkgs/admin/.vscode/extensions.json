@@ -1,5 +1,0 @@
-// admin: commit platform admin console (Angular) (pkgs/admin)
-{
-  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=827846
-  "recommendations": ["angular.ng-template"]
-}

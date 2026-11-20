@@ -1,4 +1,0 @@
-# changelog: Changelog (commit platform, pkgs/changelog)
-# allow crawling everything by default
-User-agent: *
-Disallow:

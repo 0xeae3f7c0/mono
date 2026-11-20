@@ -1,8 +1,0 @@
-// changelog: commit platform changelog (SvelteKit) (pkgs/changelog)
-{
-	"extends": "$app/tsconfig",
-	"compilerOptions": {
-		"strict": true
-	},
-	"include": ["src", "vite.config.ts"]
-}

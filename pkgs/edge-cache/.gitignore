@@ -1,4 +1,0 @@
-# edge-cache: Edge KV cache for badges and status (commit platform, pkgs/edge-cache)
-node_modules/
-dist/
-.wrangler/

@@ -1,4 +1,0 @@
-// changelog: commit platform changelog (SvelteKit) (pkgs/changelog)
-{
-	"recommendations": ["svelte.svelte-vscode"]
-}

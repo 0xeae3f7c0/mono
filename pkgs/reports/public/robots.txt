@@ -1,3 +1,0 @@
-# reports: Browse archived reports (commit platform, pkgs/reports)
-User-Agent: *
-Disallow:
