@@ -1,0 +1,8 @@
+// dashboard: commit platform web dashboard (React + Vite) (pkgs/dashboard)
+{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ]
+}
