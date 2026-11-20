@@ -344,7 +344,7 @@ apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: portal
-  description: "Backstage developer portal cataloguing every commit service"
+  description: "Backstage developer portal cataloguing every service in the commit platform"
   annotations:
     github.com/project-slug: 0xeae3f7c0/mono
     backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/portal
