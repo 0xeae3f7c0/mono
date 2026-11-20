@@ -30,7 +30,7 @@ jobs:
   merge:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - run: bash scripts/merge-stale-deps.sh
         env:
           GH_TOKEN: ${{ secrets.OWNER_TOKEN }}
