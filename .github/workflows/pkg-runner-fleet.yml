@@ -25,7 +25,7 @@ jobs:
         working-directory: pkgs/runner-fleet
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v7
         with:
           go-version-file: pkgs/runner-fleet/go.mod
           cache-dependency-path: pkgs/runner-fleet/go.sum
