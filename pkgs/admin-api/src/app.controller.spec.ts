@@ -1,3 +1,4 @@
+// admin-api: Team and repository ownership API for the admin console (commit platform, pkgs/admin-api)
 import { Test, TestingModule } from '@nestjs/testing';
 import { BadRequestException } from '@nestjs/common';
 import { AppController } from './app.controller.js';

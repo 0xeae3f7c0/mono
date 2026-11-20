@@ -1,3 +1,4 @@
+<!-- admin-api: Team and repository ownership API for the admin console (commit platform, pkgs/admin-api) -->
 # Modules, providers and scopes
 
 Docs: https://docs.nestjs.com/modules.md, https://docs.nestjs.com/fundamentals/custom-providers.md, https://docs.nestjs.com/fundamentals/injection-scopes.md, https://docs.nestjs.com/faq/common-errors.md. Each behaviour marked "checked" was run on Nest 12.5.

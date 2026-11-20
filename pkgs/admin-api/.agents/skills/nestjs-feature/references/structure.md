@@ -1,3 +1,4 @@
+<!-- admin-api: Team and repository ownership API for the admin console (commit platform, pkgs/admin-api) -->
 # Structure: where code goes, how to organize modules, what to avoid
 
 Conventions an experienced Nest team follows, and the ones coding agents most often get wrong.

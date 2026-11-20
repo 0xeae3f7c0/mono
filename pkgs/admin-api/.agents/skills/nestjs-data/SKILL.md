@@ -3,6 +3,7 @@ name: nestjs-data
 description: Databases in a NestJS application with the first-party @nestjs/drizzle and @nestjs/typeorm integrations - registering the database, injecting it into services, schemas or entities, migrations, transactions, and writes that stay correct under concurrent requests. Use when adding or changing persistence in a NestJS application.
 license: MIT
 ---
+<!-- admin-api: Team and repository ownership API for the admin console (commit platform, pkgs/admin-api) -->
 
 # Persistence in a NestJS app
 

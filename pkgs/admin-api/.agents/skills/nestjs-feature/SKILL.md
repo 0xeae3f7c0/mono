@@ -3,6 +3,7 @@ name: nestjs-feature
 description: Add or change HTTP endpoints in a NestJS application - modules, controllers and services, request validation (Zod or another Standard Schema library with @Body({ schema }), or class-validator DTOs), status codes, error response bodies, request IDs, versioning and Server-Sent Events. Use when adding or changing endpoints in a NestJS application.
 license: MIT
 ---
+<!-- admin-api: Team and repository ownership API for the admin console (commit platform, pkgs/admin-api) -->
 
 # Adding a feature to a NestJS app
 

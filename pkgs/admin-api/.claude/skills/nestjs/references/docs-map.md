@@ -1,3 +1,4 @@
+<!-- admin-api: Team and repository ownership API for the admin console (commit platform, pkgs/admin-api) -->
 # Where each topic is documented
 
 Every chapter is plain markdown at `https://docs.nestjs.com/<path>.md`. The full index, with each chapter's first sentence, is https://docs.nestjs.com/llms.txt. Some chapters are long (authentication is ~200 KB): fetch one and read the section you need.

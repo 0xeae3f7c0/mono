@@ -1,3 +1,4 @@
+<!-- admin-api: Team and repository ownership API for the admin console (commit platform, pkgs/admin-api) -->
 # Production recipes
 
 Checked on Nest 12.5.1, `@nestjs/config` 12.1.1, `@nestjs/throttler` 6.8.0, `@nestjs/terminus` 12.2.0, `@nestjs/swagger` 12.1.2, `@nestjs/authentication` 0.1.6, `@nestjs/observe` 0.3.27, Node 24.

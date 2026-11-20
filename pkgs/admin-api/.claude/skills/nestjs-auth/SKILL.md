@@ -3,6 +3,7 @@ name: nestjs-auth
 description: Sign-in, sessions, bearer tokens, API keys and permissions in a NestJS application with the first-party @nestjs/authentication and @nestjs/authorization packages - timing-safe password checks, a global guard with @Public(), policies with @Can(), and what to do when a task fixes the JWT secret or token format. Use when adding or changing authentication or authorization in a NestJS application.
 license: MIT
 ---
+<!-- admin-api: Team and repository ownership API for the admin console (commit platform, pkgs/admin-api) -->
 
 # Authentication and authorization in NestJS
 

@@ -1,3 +1,4 @@
+// admin-api: Team and repository ownership API for the admin console (commit platform, pkgs/admin-api)
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { AppService, type Team } from './app.service.js';
 

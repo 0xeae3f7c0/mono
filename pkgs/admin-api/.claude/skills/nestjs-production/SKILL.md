@@ -3,6 +3,7 @@ name: nestjs-production
 description: Production setup for a NestJS application with first-party packages - configuration and env validation (@nestjs/config), structured logs, observability with NestJS Observe (@nestjs/observe), health and readiness checks (@nestjs/terminus), rate limiting (@nestjs/throttler), OpenAPI (@nestjs/swagger), graceful shutdown and deployment behind a load balancer. Use when preparing a NestJS application for production, or adding any of these to one.
 license: MIT
 ---
+<!-- admin-api: Team and repository ownership API for the admin console (commit platform, pkgs/admin-api) -->
 
 # Production setup for a NestJS app
 

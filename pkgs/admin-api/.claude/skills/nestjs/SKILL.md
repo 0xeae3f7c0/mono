@@ -4,6 +4,7 @@ description: NestJS, the TypeScript framework for Node.js backends. How to start
 license: MIT
 compatibility: Written for NestJS 12 (@nestjs/core 12.x) on Node.js 20+.
 ---
+<!-- admin-api: Team and repository ownership API for the admin console (commit platform, pkgs/admin-api) -->
 
 # NestJS
 

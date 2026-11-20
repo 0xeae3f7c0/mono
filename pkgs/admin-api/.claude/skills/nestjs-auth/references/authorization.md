@@ -1,3 +1,4 @@
+<!-- admin-api: Team and repository ownership API for the admin console (commit platform, pkgs/admin-api) -->
 # @nestjs/authorization recipes
 
 Tutorial and reference: https://docs.nestjs.com/security/authorization.md. Everything marked "checked" ran on Nest 12.5.1 with `@nestjs/authorization` 0.1.4 and `@nestjs/authentication` 0.1.6.

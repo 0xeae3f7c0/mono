@@ -3,6 +3,7 @@ name: nestjs-testing
 description: Unit, service and end-to-end tests for a NestJS application with @nestjs/testing - Test.createTestingModule, mocking and overriding providers and global guards, Supertest against the real app, signing test users in, SSE, test databases, Vitest in ESM projects (Jest in CommonJS ones). Use when writing, running or fixing tests in a NestJS application.
 license: MIT
 ---
+<!-- admin-api: Team and repository ownership API for the admin console (commit platform, pkgs/admin-api) -->
 
 # Testing a NestJS app
 

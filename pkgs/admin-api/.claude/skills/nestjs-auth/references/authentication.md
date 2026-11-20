@@ -1,3 +1,4 @@
+<!-- admin-api: Team and repository ownership API for the admin console (commit platform, pkgs/admin-api) -->
 # @nestjs/authentication recipes
 
 Full tutorial and reference: https://docs.nestjs.com/security/authentication.md (about 200 KB: fetch it and read the section you need). Imports are from `@nestjs/authentication` unless shown otherwise; ESM projects end relative imports in `.js`.

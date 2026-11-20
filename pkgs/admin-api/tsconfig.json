@@ -1,3 +1,4 @@
+// admin-api: Team and repository ownership API for the commit admin console (NestJS) (pkgs/admin-api)
 {
   "compilerOptions": {
     "module": "nodenext",

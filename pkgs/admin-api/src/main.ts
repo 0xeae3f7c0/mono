@@ -1,3 +1,4 @@
+// admin-api: Team and repository ownership API for the admin console (commit platform, pkgs/admin-api)
 import { NestFactory } from '@nestjs/core';
 import { AppModule, ObserveInstrument } from './app.module.js';
 

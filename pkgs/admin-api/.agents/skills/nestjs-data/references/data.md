@@ -1,3 +1,4 @@
+<!-- admin-api: Team and repository ownership API for the admin console (commit platform, pkgs/admin-api) -->
 # Data recipes
 
 Every snippet here was run on Nest 12.5.1, with `@nestjs/drizzle` 0.0.2, `drizzle-orm` and `drizzle-kit` 1.0.0-rc and `@libsql/client` 0.18, and with `@nestjs/typeorm` 12.0.3, `typeorm` 1.1.3 and `better-sqlite3` 12 (TypeORM 1.1 wants `better-sqlite3@^12`). Docs: https://docs.nestjs.com/data/drizzle.md, https://docs.nestjs.com/data/typeorm.md

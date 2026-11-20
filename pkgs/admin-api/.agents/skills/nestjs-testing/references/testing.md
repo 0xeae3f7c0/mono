@@ -1,3 +1,4 @@
+<!-- admin-api: Team and repository ownership API for the admin console (commit platform, pkgs/admin-api) -->
 # Testing recipes
 
 Every recipe here ran with Vitest 4 on the configuration `nest new` generates (Nest 12.5.1, `@nestjs/authentication` 0.1.6, `@nestjs/authorization` 0.1.4, `@nestjs/throttler` 6.8.0, Supertest). Docs: https://docs.nestjs.com/fundamentals/testing.md; testing sections of `/security/authentication` and `/security/authorization`.

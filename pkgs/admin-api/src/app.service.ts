@@ -1,3 +1,4 @@
+// admin-api: Team and repository ownership API for the admin console (commit platform, pkgs/admin-api)
 import { BadRequestException, Injectable } from '@nestjs/common';
 
 /** A team in the admin console and the repositories it owns. */

@@ -1,3 +1,4 @@
+<!-- admin-api: Team and repository ownership API for the admin console (commit platform, pkgs/admin-api) -->
 # HTTP details
 
 Docs: https://docs.nestjs.com/controllers.md, https://docs.nestjs.com/exception-filters.md, https://docs.nestjs.com/interceptors.md, https://docs.nestjs.com/http/versioning.md, https://docs.nestjs.com/faq/raw-body.md, https://docs.nestjs.com/http/server-sent-events.md
