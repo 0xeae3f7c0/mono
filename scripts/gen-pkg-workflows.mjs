@@ -144,6 +144,16 @@ function labeler() {
   ].join("\n");
 }
 
+// Keep action versions in step with what Dependabot has already bumped: use
+// the highest major found for each action across the existing workflows.
+const pinned = {};
+for (const f of readdirSync(".github/workflows")) {
+  for (const [, action, major] of readFileSync(`.github/workflows/${f}`, "utf8").matchAll(/uses: ([\w./-]+)@v(\d+)/g)) {
+    pinned[action] = Math.max(pinned[action] ?? 0, Number(major));
+  }
+}
+const pin = (text) => text.replace(/uses: ([\w./-]+)@v(\d+)/g, (m, a, v) => `uses: ${a}@v${Math.max(Number(v), pinned[a] ?? 0)}`);
+
 let stale = 0;
 const wanted = new Set();
 {
@@ -156,8 +166,9 @@ const wanted = new Set();
   }
 }
 for (const name of pkgs) {
-  const text = workflow(name);
-  if (!text) continue;
+  const raw = workflow(name);
+  if (!raw) continue;
+  const text = pin(raw);
   const file = `.github/workflows/pkg-${name}.yml`;
   wanted.add(file);
   const current = existsSync(file) ? readFileSync(file, "utf8") : null;

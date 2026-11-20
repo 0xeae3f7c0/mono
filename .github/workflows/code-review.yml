@@ -40,9 +40,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: review
     if: always()
+    # Commenting on a pull request needs pull-requests: write, not just issues.
+    # Dependabot runs cannot read OWNER_TOKEN, so they rely on this token.
     permissions:
       issues: write
-      pull-requests: read
+      pull-requests: write
     steps:
       - uses: actions/github-script@v9
         with:

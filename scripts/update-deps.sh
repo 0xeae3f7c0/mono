@@ -118,7 +118,9 @@ for dir in $(projects package-lock.json); do
     while read -r pkg; do
       old=$(jq -r --arg p "node_modules/$pkg" '.packages[$p].version // empty' "$dir/package-lock.json")
       new=$(npm view "$pkg" version 2>/dev/null) || continue
-      [[ -n "$old" && -n "$new" && "$old" != "$new" ]] && echo "$pkg $old $new"
+      # `if` rather than `[[ ]] && echo`: a false test as the loop's last command
+      # would make the pipeline fail and stop the script under `set -e`.
+      if [[ -n "$old" && -n "$new" && "$old" != "$new" ]]; then echo "$pkg $old $new"; fi
     done)
   while read -r pkg old new; do
     [[ -n "$pkg" ]] || continue
