@@ -126,7 +126,9 @@ for dir in $(projects package-lock.json); do
   while read -r pkg old new; do
     [[ -n "$pkg" ]] || continue
     dev=$(jq -r --arg p "$pkg" 'if .devDependencies[$p] then "--save-dev" else "--save" end' "$dir/package.json")
-    propose "$dir" npm "$pkg" "v$old" "v$new" js npm install "$dev" --no-audit --no-fund --ignore-scripts "$pkg@$new"
+    # `npm ls` fails on unmet peer dependencies (e.g. TypeScript 7 under an
+    # Angular that requires 6.0), so such updates are skipped, not proposed.
+    propose "$dir" npm "$pkg" "v$old" "v$new" js sh -c       "npm install $dev --no-audit --no-fund --ignore-scripts '$pkg@$new' && npm ls --all >/dev/null 2>&1 || { echo '::warning::Skipping $pkg@$new in $dir: unmet peer dependencies'; exit 1; }"
   done <<<"$changes"
 done
 
