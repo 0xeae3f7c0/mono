@@ -77,6 +77,6 @@ The root holds the repository's own tooling: `crates/` (the `commit` validation 
   Pull requests get `app/<project>` and `lang/<lang>` automatically.
 - **Dependencies** update one version per pull request (`scripts/update-deps.sh`).
   A newer release merges the pending older one first; pull requests waiting more than
-  three hours merge in the daily `deps-merge.yml` run. Majors wait for review.
+  three hours merge in the next `deps-merge.yml` run (every 4 hours). Majors wait for review.
 - The portal catalog (`pkgs/portal/examples/entities.yaml`) is generated from this
   directory by `scripts/gen-catalog.mjs`.

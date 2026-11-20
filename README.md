@@ -72,9 +72,9 @@ cargo run -- review origin/main
 
 - **CI:** formatting, Clippy, tests and repository validation on pushes and PRs.
 - **Automated Code Review:** runs the same deterministic checks and posts a summary comment. It reports findings; it does not approve PRs or replace human review.
-- **Repository Maintenance:** daily, runs `cargo update -p <package>` for each locked Cargo package, `go get -u` for each direct Go module, and bumps each npm devDependency in `web/status-worker`, and opens one auto-merging PR per package with a newer release (`chore(deps/<package>): vOLD -> vNEW`). Keeps one tracking issue open while runs fail.
+- **Repository Maintenance:** every 4 hours, runs `cargo update -p <package>` for each locked Cargo package, `go get -u` for each direct Go module, and bumps each npm devDependency in `web/status-worker`, and opens one auto-merging PR per package with a newer release (`chore(deps/<package>): vOLD -> vNEW`). Keeps one tracking issue open while runs fail.
 - **Auto Format:** runs `cargo fmt` after every push to `main` and commits only when formatting changes files.
-- **Stale Run Sweeper:** daily, cancels queued runs older than 6 hours whose commit is no longer the branch head. Manual runs default to dry run.
+- **Stale Run Sweeper:** every 4 hours, cancels queued runs older than 6 hours whose commit is no longer the branch head. Manual runs default to dry run.
 
 Set an `OWNER_TOKEN` secret (owner PAT with `repo` scope) so automated PRs and pushes trigger CI and are attributed to the owner. Without it, workflows fall back to `GITHUB_TOKEN`. For auto-merge, enable **Settings → General → Allow auto-merge** and require the `Rust checks` status check on `main`.
 - **Go CI / Web CI:** path-filtered checks for `go/` and `web/` (Web CI runs ESLint, Prettier, tests and a `wrangler` dry-run build).
@@ -84,10 +84,10 @@ Set an `OWNER_TOKEN` secret (owner PAT with `repo` scope) so automated PRs and p
 - **Workflow Lint:** `actionlint` on workflow changes.
 - **Labeler:** labels PRs by area (`rust`, `go`, `web`, `ci`, `scripts`, `docs`).
 - **Labels:** syncs `<group>/<name>` labels from `scripts/labels.mjs`.
-- **Merge Waiting Dependency PRs:** daily, merges dependency PRs older than 3 hours with no failing checks (majors excluded).
+- **Merge Waiting Dependency PRs:** every 4 hours, merges dependency PRs older than 3 hours with no failing checks (majors excluded).
 - **pkg/<name>:** one generated CI workflow per project.
 - **Stale / Branch Cleanup:** closes inactive issues and PRs; deletes merged automation branches.
-- **Activity Report:** daily commits-per-author summary from the Go tool.
+- **Activity Report:** every 4 hours, commits-per-author summary from the Go tool.
 - **Dependabot:** checks GitHub Actions daily; Cargo, Go and npm updates come from Repository Maintenance.
 
 A maintenance run with no changes creates no pull request.

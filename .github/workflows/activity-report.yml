@@ -1,15 +1,15 @@
 name: Activity Report
 
-# Daily summary of commits per author over the last 24 hours, written to the job summary.
+# Every 4 hours: commits per author over the last 4 hours, written to the job summary.
 
 on:
   schedule:
-    - cron: "55 23 * * *"
+    - cron: "55 */4 * * *"
   workflow_dispatch:
     inputs:
       since:
         description: Time window (Go duration, e.g. 24h, 168h)
-        default: 24h
+        default: 4h
 
 permissions:
   contents: read
@@ -27,7 +27,7 @@ jobs:
       - name: Summarize activity
         working-directory: go
         env:
-          SINCE: ${{ inputs.since || '24h' }}
+          SINCE: ${{ inputs.since || '4h' }}
         run: |
           {
             echo '```'

@@ -1,11 +1,11 @@
 name: Stale Run Sweeper
 
-# Daily, cancels queued workflow runs older than 6 hours whose commit is no longer the
+# Every 4 hours, cancels queued workflow runs older than 6 hours whose commit is no longer the
 # head of its branch (or whose branch was deleted). In-progress runs are left alone.
 
 on:
   schedule:
-    - cron: "23 4 * * *"
+    - cron: "23 */4 * * *"
   workflow_dispatch:
     inputs:
       dry_run:

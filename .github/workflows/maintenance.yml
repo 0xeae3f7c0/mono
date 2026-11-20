@@ -1,6 +1,6 @@
 name: Repository Maintenance
 
-# Daily, scans every Cargo, Go and npm project in the repository
+# Every 4 hours, scans every Cargo, Go and npm project in the repository
 # (root, go/, web/ and pkgs/*) and opens one PR per dependency with a
 # newer release. Each PR auto-merges
 # (rebase) once required checks pass. A single tracking issue stays open while
@@ -11,7 +11,7 @@ name: Repository Maintenance
 
 on:
   schedule:
-    - cron: "17 6 * * *"
+    - cron: "17 */4 * * *"
   workflow_dispatch:
 
 permissions:
