@@ -1,3 +1,4 @@
+# status-worker: CI status for the dashboard and apps
 node_modules/
 .wrangler/
 dist/

@@ -1,0 +1,13 @@
+// edge-cache: Edge KV cache for commit badges and status (Hono on Cloudflare Workers) (pkgs/edge-cache)
+{
+  "compilerOptions": {
+    "target": "es2022",
+    "module": "es2022",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "types": ["@cloudflare/workers-types"]
+  },
+  "include": ["src", "test"]
+}

@@ -1,0 +1,6 @@
+// mobile: commit CI status on phones (Expo) (pkgs/mobile)
+{
+  "enabledPlugins": {
+    "expo@claude-plugins-official": true
+  }
+}

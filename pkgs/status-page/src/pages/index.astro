@@ -1,0 +1,30 @@
+---
+// status-page: Public status page (commit platform, pkgs/status-page)
+// Public status page for the platform's services, built as a static site.
+const services = [
+	{ name: 'events-api', description: 'Activity event storage' },
+	{ name: 'webhooks', description: 'GitHub webhook intake' },
+	{ name: 'badges', description: 'README badges' },
+	{ name: 'edge-cache', description: 'Edge cache for badges and status' },
+];
+---
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<title>commit status</title>
+	</head>
+	<body>
+		<h1>commit status</h1>
+		<ul>
+			{services.map((s) => <li><strong>{s.name}</strong>: {s.description} <span data-service={s.name}>checking…</span></li>)}
+		</ul>
+		<script>
+			for (const el of document.querySelectorAll<HTMLElement>('[data-service]')) {
+				fetch(`/${el.dataset.service}/health`)
+					.then((r) => (el.textContent = r.ok ? 'operational' : 'degraded'))
+					.catch(() => (el.textContent = 'unreachable'));
+			}
+		</script>
+	</body>
+</html>

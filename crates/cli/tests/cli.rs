@@ -1,3 +1,4 @@
+// commit CLI: repository validation (crates/)
 use assert_cmd::Command;
 use predicates::prelude::*;
 use tempfile::TempDir;

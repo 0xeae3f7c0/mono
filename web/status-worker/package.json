@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Cloudflare Worker that serves repository status as JSON",
+  "description": "Cloudflare Worker serving commit CI status",
   "scripts": {
     "test": "node --test",
     "lint": "eslint .",

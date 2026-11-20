@@ -1,3 +1,4 @@
+// status-worker: CI status for the dashboard and apps
 import js from "@eslint/js";
 import globals from "globals";
 

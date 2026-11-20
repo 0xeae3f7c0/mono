@@ -1,0 +1,7 @@
+// mobile: commit CI status on phones (Expo) (pkgs/mobile)
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true
+  }
+}

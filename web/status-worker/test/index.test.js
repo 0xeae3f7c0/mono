@@ -1,3 +1,4 @@
+// status-worker: CI status for the dashboard and apps
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import worker from "../src/index.js";

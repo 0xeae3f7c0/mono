@@ -1,3 +1,4 @@
+# commit CLI: repository validation (crates/)
 [package]
 name = "commit-report"
 description = "Validation report type and renderers for the commit toolkit"

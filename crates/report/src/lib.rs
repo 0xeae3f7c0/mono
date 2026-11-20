@@ -1,3 +1,4 @@
+// commit CLI: repository validation (crates/)
 //! Validation report shared by every `commit` command, with text and JSON renderers.
 
 use serde::Serialize;

@@ -1,3 +1,4 @@
+# commit CLI: repository validation (crates/)
 [package]
 name = "commit-core"
 description = "Repository validation rules for the commit toolkit"

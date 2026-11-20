@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// repository tooling (scripts/)
 // Single source of truth for repository labels, using `<group>/<name>` names.
 // `app/<project>` labels are derived from the projects in pkgs/ plus the root parts.
 //

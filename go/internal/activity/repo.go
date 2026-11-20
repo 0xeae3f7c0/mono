@@ -1,3 +1,4 @@
+// activity: commits-per-author summary used by the Activity Report workflow
 package activity
 
 import (

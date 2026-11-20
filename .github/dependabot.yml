@@ -1,3 +1,4 @@
+# repository automation (.github/)
 # Cargo, Go and npm version updates come from scripts/update-deps.sh (maintenance.yml),
 # one PR per package; Dependabot security alerts still cover them.
 version: 2

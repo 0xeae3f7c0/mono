@@ -1,0 +1,7 @@
+# helm-render: Renders `deploy/helm/commit` for review (commit platform, pkgs/helm-render)
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-{{ .Chart.Name }}
+data:
+  greeting: {{ .Values.greeting | quote }}

@@ -1,3 +1,4 @@
+// status-worker: CI status for the dashboard and apps
 // Serves a small JSON status document for the repository.
 //   GET /health  -> {"ok": true}
 //   GET /status  -> latest CI run for the default branch (via the GitHub API)

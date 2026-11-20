@@ -1,3 +1,4 @@
+// commit CLI: repository validation (crates/)
 //! Thin wrappers around the `git` executable.
 
 use std::path::Path;

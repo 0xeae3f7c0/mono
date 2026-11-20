@@ -1,3 +1,4 @@
+// commit CLI: repository validation (crates/)
 //! Repository validation rules: required files, Cargo manifest and workflows.
 
 use std::path::Path;

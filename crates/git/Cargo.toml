@@ -1,3 +1,4 @@
+# commit CLI: repository validation (crates/)
 [package]
 name = "commit-git"
 description = "Git helpers for the commit toolkit"

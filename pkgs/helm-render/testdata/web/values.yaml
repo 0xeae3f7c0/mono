@@ -1,0 +1,2 @@
+# helm-render: Renders `deploy/helm/commit` for review (commit platform, pkgs/helm-render)
+greeting: hello

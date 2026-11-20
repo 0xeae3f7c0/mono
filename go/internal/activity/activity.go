@@ -1,3 +1,4 @@
+// activity: commits-per-author summary used by the Activity Report workflow
 // Package activity summarizes commit activity from `git log` output.
 package activity
 

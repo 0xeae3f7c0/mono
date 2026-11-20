@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# repository tooling (scripts/)
 # Merges open dependency PRs (label kind/deps) that have waited longer than
 # MAX_AGE_HOURS and have no failing checks. Checks that are still pending are
 # bypassed with --admin, so OWNER_TOKEN must belong to a repository admin.

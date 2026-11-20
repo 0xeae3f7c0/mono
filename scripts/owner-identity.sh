@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# repository tooling (scripts/)
 # Sets git author/committer to the GitHub account that owns GH_TOKEN, using
 # its noreply address so commits are attributed to that account.
 set -euo pipefail

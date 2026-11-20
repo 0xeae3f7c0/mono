@@ -1,3 +1,4 @@
+// activity: commits-per-author summary used by the Activity Report workflow
 // Command activity prints commit counts per author for a time window.
 //
 //	go run ./cmd/activity --since 24h --repo ..

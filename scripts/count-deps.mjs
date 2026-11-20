@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// repository tooling (scripts/)
 // Counts unique locked dependencies (name@version) per ecosystem across every
 // lockfile under a directory. Skips node_modules, target and .git.
 //
