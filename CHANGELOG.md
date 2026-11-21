@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.1](https://github.com/0xeae3f7c0/mono/compare/v0.5.0...v0.5.1) (2026-11-21)
+
+
+### Bug Fixes
+
+* **deps:** bump react-router from 6.30.6 to 8.5.2 in /pkgs/portal ([#229](https://github.com/0xeae3f7c0/mono/issues/229)) ([667d25b](https://github.com/0xeae3f7c0/mono/commit/667d25b2e6abc1a51b1bee31e2c362812be4ec78))
+
 ## [0.5.0](https://github.com/0xeae3f7c0/mono/compare/v0.4.0...v0.5.0) (2026-11-21)
 
 
