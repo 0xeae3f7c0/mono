@@ -42,6 +42,15 @@ node scripts/gen-catalog.mjs         # Backstage catalog in pkgs/portal
 CI fails if either output is stale. `node scripts/count-deps.mjs` prints unique locked
 dependencies per ecosystem.
 
+**Nix projects** are folders with a `default.nix` (a package) or `module.nix` (the
+NixOS module). The flake finds them automatically (`nix/pkgs.nix`), so
+`nix build .#<name>` works for each. Packages that build a pinned upstream release
+(`vuln-scan`, `sbom`, `actions-lint`, `helm-check`) set `version` and source hashes in
+`default.nix`; Repository Maintenance runs `nix-update` (through `nix/update.nix`) and
+opens one pull request per new release. Container images (`devcontainer`,
+`ci-runner-image` and the service images) are pushed to GitHub Container Registry by
+`publish-images.yml`.
+
 ## Run locally
 
 Install stable Rust (https://rustup.rs), Go and Node.js 22+.

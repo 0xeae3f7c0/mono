@@ -63,6 +63,15 @@ directory in this monorepo is one part of that pipeline.
 | Operate | `services` | Running platform containers on a Docker host | Go, moby client |
 | Operate | `tracing` | Reference OpenTelemetry setup for Go services | Go, OpenTelemetry |
 | Build | `minify` | Minifies the widget bundle | Rust, SWC |
+| Operate | `vuln-scan` | Scans every lockfile for known vulnerabilities | Nix, OSV-Scanner (pinned) |
+| Operate | `sbom` | CycloneDX SBOM per project | Nix, Syft (pinned) |
+| Operate | `actions-lint` | Lints workflows for correctness and security | Nix, zizmor (pinned), actionlint |
+| Operate | `helm-check` | Lints and schema-validates the deploy chart | Nix, kubeconform (pinned), Helm |
+| Operate | `repo-tools` | Repository scripts with pinned dependencies | Nix |
+| Operate | `devcontainer` | Codespaces image with every toolchain | Nix, dockerTools |
+| Operate | `ci-runner-image` | Ephemeral self-hosted Actions runner image | Nix, dockerTools, github-runner |
+| Operate | `nixos-module` | Runs `events-api` and `badges` as systemd services | NixOS module |
+| Operate | `integration-test` | Boots the services in a NixOS VM and tests them over HTTP | NixOS test |
 
 The root holds the repository's own tooling: `crates/` (the `commit` validation CLI),
 `go/` (commit activity summaries used by the Activity Report workflow),
