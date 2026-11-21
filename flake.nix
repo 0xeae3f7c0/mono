@@ -15,6 +15,7 @@
 
   outputs =
     {
+      self,
       nixpkgs,
       flake-utils,
       rust-overlay,
@@ -36,6 +37,7 @@
           extra = {
             commitPackages = rust.packages;
             devTools = devPackages.tools;
+            nixosModule = self.nixosModules.default;
           };
         };
       in
@@ -62,5 +64,9 @@
         # `nix fmt`
         formatter = pkgs.nixfmt;
       }
-    );
+    )
+    // {
+      # NixOS module for running the platform services (pkgs/nixos-module).
+      nixosModules.default = import ./pkgs/nixos-module/module.nix { inherit self; };
+    };
 }

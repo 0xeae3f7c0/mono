@@ -343,6 +343,20 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
+  name: nixos-module
+  description: "NixOS module that runs the commit platform services as hardened systemd units: services.commit.events-api (SQLite in /var/lib) and services.commit.badges. Exposed by the flake as nixosModules.default."
+  annotations:
+    github.com/project-slug: 0xeae3f7c0/mono
+    backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/nixos-module
+spec:
+  type: tool
+  lifecycle: production
+  owner: platform
+  system: commit
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
   name: pipelines
   description: "runs the Temporal worker for the weekly report pipeline: the ReportWorkflow builds a repository's report title and summary line via an activity (retried by Temporal), before reports-pdf renders and archive uploads it. Requires a Temporal server (TEMPORAL_ADDRESS, default localhost:7233)."
   annotations:
