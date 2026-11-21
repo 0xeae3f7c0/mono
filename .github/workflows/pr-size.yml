@@ -1,0 +1,41 @@
+name: PR Size
+
+# Labels pull requests size/xs ... size/xl by changed lines, ignoring lockfiles
+# and generated files so a dependency bump is not counted as a huge change.
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: CodelyTV/pr-size-labeler@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          xs_label: size/xs
+          xs_max_size: "10"
+          s_label: size/s
+          s_max_size: "100"
+          m_label: size/m
+          m_max_size: "500"
+          l_label: size/l
+          l_max_size: "1000"
+          xl_label: size/xl
+          fail_if_xl: "false"
+          files_to_ignore: |
+            Cargo.lock
+            **/Cargo.lock
+            **/go.sum
+            **/package-lock.json
+            **/yarn.lock
+            flake.lock
+            .github/labeler.yml
+            .github/workflows/pkg-*.yml
+            pkgs/portal/examples/entities.yaml

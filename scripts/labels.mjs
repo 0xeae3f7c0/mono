@@ -44,6 +44,8 @@ const groups = {
     superseded: "Replaced by a newer pull request",
   }],
   effort: ["bfdadc", { xs: "Minutes", s: "An hour or two", m: "About a day", l: "Several days" }],
+  // Set by .github/workflows/pr-size.yml from changed lines (lockfiles ignored).
+  size: ["c2e0c6", { xs: "Up to 10 lines", s: "Up to 100 lines", m: "Up to 500 lines", l: "Up to 1000 lines", xl: "Over 1000 lines" }],
   source: ["ededed", {
     human: "Opened by a person",
     "update-deps": "Opened by scripts/update-deps.sh",
