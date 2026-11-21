@@ -122,6 +122,26 @@ Times are UTC. Workflows with a schedule can also be started from the Actions ta
 | Labels | on change, Mondays | Syncs `<group>/<name>` labels from `scripts/labels.mjs` |
 | Release | on `v*` tags | Builds the CLI for Linux, macOS and Windows and publishes a release |
 
+### Pull requests and releases
+
+| Workflow or app | What it does |
+|---|---|
+| Release Please | Keeps a `chore(release): vX.Y.Z` PR with the changelog; merging it tags the release, which `release.yml` builds |
+| PR Title | Fails pull requests whose title is not a Conventional Commit |
+| PR Size | Labels pull requests `size/xs` … `size/xl` (lockfiles ignored) |
+| Coverage | Rust (`crates/`) and Go coverage, uploaded to Codecov |
+| Scorecard | Weekly OpenSSF security-practice score, in Security → Code scanning |
+| Merge queue | Ruleset setting; `ci.yml` runs on `merge_group` |
+
+GitHub Apps (install once; their settings are in the repository root):
+
+| App | Config | Install |
+|---|---|---|
+| CodeRabbit (AI review) | `.coderabbit.yaml` | https://github.com/apps/coderabbitai |
+| Socket (supply-chain alerts) | `socket.yml` | https://github.com/apps/socket-security |
+| Codecov (coverage comments) | `codecov.yml` | https://github.com/apps/codecov |
+| ImgBot (image compression) | `.imgbotconfig` | https://github.com/apps/imgbot |
+
 ## Repository settings
 
 1. Add an `OWNER_TOKEN` secret (personal access token with `repo` scope) so automated
