@@ -30,8 +30,16 @@ for pr in $prs; do
     --json title,mergeable,files,statusCheckRollup,reviews,additions,deletions)
   title=$(jq -r .title <<<"$info")
 
-  if [[ $(jq -r .mergeable <<<"$info") != MERGEABLE ]]; then
-    echo "#$pr: not mergeable yet, skipping"
+  # GitHub computes mergeability lazily and reports UNKNOWN right after the
+  # base branch moves; ask again for up to a minute before giving up.
+  mergeable=$(jq -r .mergeable <<<"$info")
+  for _ in 1 2 3 4 5 6; do
+    [[ $mergeable == UNKNOWN ]] || break
+    sleep 10
+    mergeable=$(gh pr view "$pr" --repo "$repo" --json mergeable --jq .mergeable)
+  done
+  if [[ $mergeable != MERGEABLE ]]; then
+    echo "#$pr: mergeable is $mergeable, skipping"
     continue
   fi
   # Checks: commit statuses report .state, check runs report .status/.conclusion.
