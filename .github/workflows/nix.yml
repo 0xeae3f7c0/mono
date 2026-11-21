@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: DeterminateSystems/nix-installer-action@v20
+      - uses: DeterminateSystems/nix-installer-action@v23
       - name: Evaluate and build the dev shell
         run: |
           nix flake check --all-systems --no-build
@@ -42,7 +42,7 @@ jobs:
         package: [commit, events-api, badges, shortlinks, activity-rpc, events-api-image, badges-image]
     steps:
       - uses: actions/checkout@v7
-      - uses: DeterminateSystems/nix-installer-action@v20
+      - uses: DeterminateSystems/nix-installer-action@v23
       - run: nix build .#${{ matrix.package }} --print-build-logs
       - name: Smoke test
         if: ${{ !endsWith(matrix.package, '-image') }}
