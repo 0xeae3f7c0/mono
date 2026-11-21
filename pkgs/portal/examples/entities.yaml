@@ -21,6 +21,20 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
+  name: actions-lint
+  description: "Lints the repository's GitHub Actions workflows: actionlint for correctness (with ShellCheck for run: scripts) and zizmor for security issues such as over-broad token permissions and template injection. Run `commit-actions-lint` from the repository root."
+  annotations:
+    github.com/project-slug: 0xeae3f7c0/mono
+    backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/actions-lint
+spec:
+  type: tool
+  lifecycle: production
+  owner: platform
+  system: commit
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
   name: activity-rpc
   description: "Internal gRPC service (tonic) that answers \"how active is this repository?\" for other services, e.g. `webhooks` and `pipelines`. Messages and service are defined in Rust, so no protoc is needed."
   annotations:
