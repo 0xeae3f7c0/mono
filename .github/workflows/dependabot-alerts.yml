@@ -1,0 +1,38 @@
+name: Dependabot Alerts to Issues
+
+# Every 4 hours: one issue per open Dependabot security alert (labels kind/security,
+# source/dependabot, app/<project>, priority by severity); issues close when their
+# alert is fixed or dismissed. Reading alerts needs OWNER_TOKEN (classic PAT with
+# repo scope, or fine-grained with "Dependabot alerts: read" and "Issues: write").
+
+on:
+  schedule:
+    - cron: "47 */4 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Only report what would change
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  issues: write
+  security-events: read
+
+concurrency:
+  group: dependabot-alerts
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - run: node scripts/alerts-to-issues.mjs
+        env:
+          GH_TOKEN: ${{ secrets.OWNER_TOKEN }}
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
