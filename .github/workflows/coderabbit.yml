@@ -24,7 +24,9 @@ concurrency:
 
 jobs:
   request-review:
-    if: ${{ !github.event.pull_request.draft }}
+    # CodeRabbit skips PRs authored by bots (Dependabot, github-actions) unless
+    # the bot has a review seat, so asking for a review there only adds noise.
+    if: ${{ !github.event.pull_request.draft && github.event.pull_request.user.type != 'Bot' }}
     runs-on: ubuntu-latest
     steps:
       - name: Comment @coderabbitai review
