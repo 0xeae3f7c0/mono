@@ -1,0 +1,38 @@
+name: Code Scanning Alerts to Issues
+
+# Every 4 hours: one issue per open code scanning alert (CodeQL, Scorecard, ...),
+# labelled kind/security, source/code-scanning, app/<project> and a priority from
+# the alert's severity; issues close when their alert is fixed or dismissed.
+# GITHUB_TOKEN can read code scanning alerts with security-events: read.
+
+on:
+  schedule:
+    - cron: "53 */4 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Only report what would change
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  issues: write
+  security-events: read
+
+concurrency:
+  group: code-scanning-alerts
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - run: node scripts/alerts-to-issues.mjs --source code-scanning
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}

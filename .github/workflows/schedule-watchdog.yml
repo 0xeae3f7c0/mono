@@ -32,6 +32,7 @@ jobs:
             dependabot-alerts.yml
             activity-report.yml
             stale-run-sweeper.yml
+            code-scanning-alerts.yml
         run: |
           now=$(date -u +%s)
           for wf in $WORKFLOWS; do

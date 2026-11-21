@@ -1,16 +1,21 @@
 #!/usr/bin/env node
-// Mirrors open Dependabot security alerts into issues, one issue per alert,
-// and closes the issue once the alert is fixed or dismissed. Each issue carries
-// a hidden marker (<!-- dependabot-alert:N -->) so reruns update, never duplicate.
+// Mirrors open security alerts into issues, one issue per alert, and closes the
+// issue once the alert is fixed or dismissed. Two sources: Dependabot alerts
+// (the default) and code scanning alerts (CodeQL, Scorecard, ...). Each issue
+// carries a hidden marker (<!-- dependabot-alert:N --> or <!-- code-scanning-alert:N -->)
+// so reruns update, never duplicate.
 //
-//   GH_TOKEN=... GITHUB_REPOSITORY=owner/repo [DRY_RUN=true] node scripts/alerts-to-issues.mjs
+//   GH_TOKEN=... GITHUB_REPOSITORY=owner/repo [DRY_RUN=true] node scripts/alerts-to-issues.mjs [--source code-scanning]
 
-const MARKER = /<!-- dependabot-alert:(\d+) -->/;
 const SEVERITY_PRIORITY = {
   critical: "priority/critical",
   high: "priority/high",
   medium: "priority/normal",
   low: "priority/low",
+  // Code scanning rules without a security severity use these levels.
+  error: "priority/high",
+  warning: "priority/normal",
+  note: "priority/low",
 };
 
 /** `app/<project>` label for the manifest an alert was raised against. */
@@ -68,9 +73,68 @@ export function issueFor(alert) {
   return { title, body, labels };
 }
 
+/** Issue title, labels and body for one code scanning alert. */
+export function codeScanningIssueFor(alert) {
+  const rule = alert.rule;
+  const severity = rule.security_severity_level ?? rule.severity ?? "warning";
+  const location = alert.most_recent_instance?.location ?? {};
+  const path = location.path ?? "";
+  const where = path ? `\`${path}${location.start_line ? `:${location.start_line}` : ""}\`` : "unknown";
+  const message = alert.most_recent_instance?.message?.text;
+  const title = `fix(security): ${rule.description ?? rule.id} (${alert.tool.name} ${rule.id})`;
+  const body = [
+    `<!-- code-scanning-alert:${alert.number} -->`,
+    `**${rule.description ?? rule.id}**`,
+    "",
+    "| | |",
+    "|---|---|",
+    `| Tool | ${alert.tool.name} |`,
+    `| Rule | \`${rule.id}\` |`,
+    `| Severity | ${severity} |`,
+    `| Location | ${where} |`,
+    "",
+    ...(message ? [message, ""] : []),
+    `Code scanning alert: ${alert.html_url}`,
+    "",
+    "_This issue closes automatically when the alert is fixed or dismissed._",
+  ].join("\n");
+  const labels = [
+    "kind/security",
+    "source/code-scanning",
+    "status/needs-triage",
+    appLabel(path),
+    SEVERITY_PRIORITY[severity] ?? "priority/normal",
+  ];
+  return { title, body, labels };
+}
+
+/** Where each alert source is read from and how its issues are tagged. */
+export const SOURCES = {
+  dependabot: {
+    name: "Dependabot alert",
+    alerts: "/dependabot/alerts?state=open",
+    alert: (n) => `/dependabot/alerts/${n}`,
+    label: "source/dependabot",
+    marker: /<!-- dependabot-alert:(\d+) -->/,
+    issueFor,
+  },
+  "code-scanning": {
+    name: "Code scanning alert",
+    alerts: "/code-scanning/alerts?state=open",
+    alert: (n) => `/code-scanning/alerts/${n}`,
+    label: "source/code-scanning",
+    marker: /<!-- code-scanning-alert:(\d+) -->/,
+    issueFor: codeScanningIssueFor,
+  },
+};
+
 async function main() {
   const { GH_TOKEN, GITHUB_REPOSITORY } = process.env;
   const dryRun = process.env.DRY_RUN === "true";
+  const sourceArg = process.argv.indexOf("--source");
+  const sourceName = sourceArg === -1 ? "dependabot" : process.argv[sourceArg + 1];
+  const source = SOURCES[sourceName];
+  if (!source) throw new Error(`unknown --source ${sourceName}; expected ${Object.keys(SOURCES).join(" or ")}`);
   if (!GH_TOKEN || !GITHUB_REPOSITORY) throw new Error("GH_TOKEN and GITHUB_REPOSITORY are required");
 
   const base = `https://api.github.com/repos/${GITHUB_REPOSITORY}`;
@@ -91,7 +155,7 @@ async function main() {
     return res.status === 204 ? null : res.json();
   };
   // Follow `Link: rel="next"`; the Dependabot alerts API pages by cursor and
-  // rejects `page=` numbers, while issues accept either.
+  // rejects `page=` numbers, while issues and code scanning accept either.
   const all = async (path) => {
     const out = [];
     let url = `${base}${path}${path.includes("?") ? "&" : "?"}per_page=100`;
@@ -103,11 +167,11 @@ async function main() {
     return out;
   };
 
-  const alerts = await all("/dependabot/alerts?state=open");
-  const issues = (await all("/issues?state=all&labels=source/dependabot,kind/security")).filter((i) => !i.pull_request);
+  const alerts = await all(source.alerts);
+  const issues = (await all(`/issues?state=all&labels=${source.label},kind/security`)).filter((i) => !i.pull_request);
   const byAlert = new Map();
   for (const issue of issues) {
-    const m = issue.body?.match(MARKER);
+    const m = issue.body?.match(source.marker);
     if (m) byAlert.set(Number(m[1]), issue);
   }
 
@@ -117,7 +181,7 @@ async function main() {
   const open = new Set(alerts.map((a) => a.number));
   for (const alert of alerts) {
     const existing = byAlert.get(alert.number);
-    const issue = issueFor(alert);
+    const issue = source.issueFor(alert);
     if (!existing) {
       console.log(`create: ${issue.title}`);
       if (!dryRun) await api("/issues", { method: "POST", body: JSON.stringify(issue) });
@@ -130,20 +194,20 @@ async function main() {
   }
   for (const [number, issue] of byAlert) {
     if (open.has(number) || issue.state === "closed") continue;
-    const alert = await api(`/dependabot/alerts/${number}`);
+    const alert = await api(source.alert(number));
     const reason = alert.state === "fixed" ? "completed" : "not_planned";
     console.log(`close #${issue.number}: alert ${number} is ${alert.state}`);
     if (!dryRun) {
       await api(`/issues/${issue.number}/comments`, {
         method: "POST",
-        body: JSON.stringify({ body: `Dependabot alert ${number} is now **${alert.state}**; closing.` }),
+        body: JSON.stringify({ body: `${source.name} ${number} is now **${alert.state}**; closing.` }),
       });
       await api(`/issues/${issue.number}`, { method: "PATCH", body: JSON.stringify({ state: "closed", state_reason: reason }) });
     }
     closed++;
   }
   console.log(
-    `${alerts.length} open alerts: ${created} issues created, ${reopened} reopened, ${closed} closed${dryRun ? " (dry run)" : ""}.`,
+    `${alerts.length} open ${source.name}s: ${created} issues created, ${reopened} reopened, ${closed} closed${dryRun ? " (dry run)" : ""}.`,
   );
 }
 
