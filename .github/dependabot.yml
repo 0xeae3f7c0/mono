@@ -4,32 +4,33 @@
 #
 # Dependabot itself handles:
 #   - version updates for GitHub Actions, Docker base images and the dev container;
-#   - security updates only (open-pull-requests-limit: 0 turns version updates off)
-#     for Cargo, Go and npm, so a vulnerable package gets a fix PR even between
-#     maintenance runs. Needs "Dependabot security updates" on in Settings.
+#   - version and security updates for Cargo, Go and npm, alongside update-deps.sh.
+#     Security updates need "Dependabot security updates" on in Settings.
+# open-pull-requests-limit is 1000 per entry (default 5) so updates never queue up.
 # Directory globs pick up new projects in pkgs/ without editing this file.
 version: 2
 updates:
   - package-ecosystem: github-actions
     directory: /
+    open-pull-requests-limit: 1000
     schedule:
       interval: daily
-    open-pull-requests-limit: 10
     labels: [kind/deps, area/ci, source/dependabot]
     commit-message:
       prefix: "ci(deps)"
 
   - package-ecosystem: docker
     directories: ["/pkgs/*/packages/*", "/pkgs/*"]
+    open-pull-requests-limit: 1000
     schedule:
       interval: daily
-    open-pull-requests-limit: 5
     labels: [kind/deps, area/infra, source/dependabot]
     commit-message:
       prefix: "build(deps)"
 
   - package-ecosystem: devcontainers
     directory: /
+    open-pull-requests-limit: 1000
     schedule:
       interval: weekly
     labels: [kind/deps, area/infra, source/dependabot]
@@ -38,27 +39,27 @@ updates:
 
   - package-ecosystem: cargo
     directories: ["/", "/pkgs/*"]
+    open-pull-requests-limit: 1000
     schedule:
       interval: daily
-    open-pull-requests-limit: 0
-    labels: [kind/deps, kind/security, lang/rust, source/dependabot]
+    labels: [kind/deps, lang/rust, source/dependabot]
     commit-message:
       prefix: "fix(deps)"
 
   - package-ecosystem: gomod
     directories: ["/go", "/pkgs/*"]
+    open-pull-requests-limit: 1000
     schedule:
       interval: daily
-    open-pull-requests-limit: 0
-    labels: [kind/deps, kind/security, lang/go, source/dependabot]
+    labels: [kind/deps, lang/go, source/dependabot]
     commit-message:
       prefix: "fix(deps)"
 
   - package-ecosystem: npm
     directories: ["/pkgs/*", "/web/*"]
+    open-pull-requests-limit: 1000
     schedule:
       interval: daily
-    open-pull-requests-limit: 0
-    labels: [kind/deps, kind/security, lang/js, source/dependabot]
+    labels: [kind/deps, lang/js, source/dependabot]
     commit-message:
       prefix: "fix(deps)"
