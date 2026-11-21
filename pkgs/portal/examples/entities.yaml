@@ -259,6 +259,20 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
+  name: helm-check
+  description: "Validates the deploy chart (deploy/helm/commit): `helm lint`, then renders it and checks every manifest against the Kubernetes schemas with kubeconform. Run `commit-helm-check [chart-dir]` from the repository root."
+  annotations:
+    github.com/project-slug: 0xeae3f7c0/mono
+    backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/helm-check
+spec:
+  type: tool
+  lifecycle: production
+  owner: platform
+  system: commit
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
   name: helm-render
   description: "renders the platform's Helm chart (deploy/helm/commit) with its default values and prints each manifest, so deployment changes can be reviewed as plain YAML in pull requests."
   annotations:
