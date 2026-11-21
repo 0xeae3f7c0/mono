@@ -132,3 +132,8 @@ Times are UTC. Workflows with a schedule can also be started from the Actions ta
    GitHub Actions to create pull requests.
 4. **Settings → Rules:** a ruleset on `main` requiring the `Rust checks` and
    `Generated files` status checks, so auto-merge waits for them.
+5. **Merge queue:** in the same ruleset, turn on **Require merge queue** (merge method
+   squash, "Only merge non-failing pull requests"). Auto-merging pull requests then
+   join the queue and land one at a time, each tested against the latest `main`, so
+   dependency updates to the same lockfile no longer conflict. `ci.yml` runs on the
+   `merge_group` event for this.

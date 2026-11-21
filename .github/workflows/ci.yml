@@ -5,6 +5,8 @@ on:
     branches: ["**"]
   pull_request:
     branches: [main]
+  # Merge queue: the required checks run again on the queued merge commit.
+  merge_group:
   workflow_dispatch:
 
 permissions:
