@@ -55,6 +55,11 @@ function steps(name, dir) {
     ];
   }
   if (existsSync(join(dir, "package.json"))) {
+    const pkg = JSON.parse(readFileSync(join(dir, "package.json"), "utf8"));
+    const deps = Object.keys({ ...pkg.dependencies, ...pkg.devDependencies });
+    // Browser tests (e.g. Storybook via @vitest/browser-playwright) need the
+    // Playwright browser that matches the installed version, plus its system libraries.
+    const playwright = deps.some((d) => d === "playwright" || d === "@playwright/test" || d === "@vitest/browser-playwright");
     return [
       "      - uses: actions/setup-node@v4",
       "        with:",
@@ -62,6 +67,7 @@ function steps(name, dir) {
       "          cache: npm",
       `          cache-dependency-path: ${dir}/package-lock.json`,
       "      - run: npm ci",
+      ...(playwright ? ["      - run: npx playwright install --with-deps chromium"] : []),
       "      - run: npm run ci",
     ];
   }
