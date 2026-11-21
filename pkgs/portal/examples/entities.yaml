@@ -553,6 +553,20 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
+  name: secret-scan
+  description: "Scans the repository's working tree and git history for leaked secrets (API keys, tokens, private keys) with Gitleaks. Run `commit-secret-scan [dir]` (defaults to the current directory)."
+  annotations:
+    github.com/project-slug: 0xeae3f7c0/mono
+    backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/secret-scan
+spec:
+  type: tool
+  lifecycle: production
+  owner: platform
+  system: commit
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
   name: services
   description: "shows which platform services are running on a Docker host (single-node deployments): running containers grouped by image."
   annotations:
@@ -572,6 +586,20 @@ metadata:
   annotations:
     github.com/project-slug: 0xeae3f7c0/mono
     backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/shortlinks
+spec:
+  type: tool
+  lifecycle: production
+  owner: platform
+  system: commit
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: spell-check
+  description: "Finds and fixes common misspellings in source code, docs and commit messages with typos. Run `commit-spell-check [path...]` (defaults to the current directory)."
+  annotations:
+    github.com/project-slug: 0xeae3f7c0/mono
+    backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/spell-check
 spec:
   type: tool
   lifecycle: production
