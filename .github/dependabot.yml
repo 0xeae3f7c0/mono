@@ -4,7 +4,8 @@
 #
 # Dependabot itself handles:
 #   - version updates for GitHub Actions, Docker base images and the dev container;
-#   - version and security updates for Cargo, Go and npm, alongside update-deps.sh.
+#   - version and security updates for Cargo, Go and npm, alongside update-deps.sh,
+#     and for Python (uv) projects in pkgs/.
 #     Security updates need "Dependabot security updates" on in Settings.
 # open-pull-requests-limit is 1000 per entry (default 5) so updates never queue up.
 # Directory globs pick up new projects in pkgs/ without editing this file.
@@ -52,6 +53,15 @@ updates:
     schedule:
       interval: daily
     labels: [kind/deps, lang/go, source/dependabot]
+    commit-message:
+      prefix: "fix(deps)"
+
+  - package-ecosystem: uv
+    directories: ["/pkgs/*"]
+    open-pull-requests-limit: 1000
+    schedule:
+      interval: daily
+    labels: [kind/deps, lang/python, source/dependabot]
     commit-message:
       prefix: "fix(deps)"
 

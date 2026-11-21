@@ -26,6 +26,22 @@
       url = "github:rustsec/advisory-db";
       flake = false;
     };
+    # Python projects in pkgs/ build from their uv.lock with uv2nix (nix/python.nix).
+    pyproject-nix = {
+      url = "github:pyproject-nix/pyproject.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    uv2nix = {
+      url = "github:pyproject-nix/uv2nix";
+      inputs.pyproject-nix.follows = "pyproject-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    pyproject-build-systems = {
+      url = "github:pyproject-nix/build-system-pkgs";
+      inputs.pyproject-nix.follows = "pyproject-nix";
+      inputs.uv2nix.follows = "uv2nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -38,6 +54,9 @@
       treefmt-nix,
       git-hooks,
       advisory-db,
+      pyproject-nix,
+      uv2nix,
+      pyproject-build-systems,
       ...
     }:
     flake-utils.lib.eachDefaultSystem (
@@ -49,6 +68,14 @@
         };
         devPackages = import ./nix/packages.nix { inherit pkgs; };
         rust = import ./nix/rust.nix { inherit pkgs crane; };
+        python = import ./nix/python.nix {
+          inherit
+            pkgs
+            pyproject-nix
+            uv2nix
+            pyproject-build-systems
+            ;
+        };
         # Nix projects in pkgs/ (one directory per package, see nix/pkgs.nix).
         nixProjects = import ./nix/pkgs.nix {
           inherit pkgs;
@@ -71,10 +98,11 @@
         };
       in
       {
-        # `nix build .#<name>`: the CLI, the Rust services, (on Linux) their
+        # `nix build .#<name>`: the CLI, the Rust services, the Python projects, (on Linux) their
         # container images, and every Nix project in pkgs/.
         packages =
           rust.packages
+          // python
           // nixProjects
           // {
             default = rust.packages.commit;

@@ -11,6 +11,9 @@
     go
     # JavaScript (web/, pkgs/*; Yarn for pkgs/portal via corepack)
     nodejs_24
+    # Python (pkgs/heatmap; uv manages the project environment)
+    python313
+    uv
     # Repository tooling
     git
     gh

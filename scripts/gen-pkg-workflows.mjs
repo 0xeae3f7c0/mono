@@ -71,6 +71,18 @@ function steps(name, dir) {
       "      - run: npm run ci",
     ];
   }
+  if (existsSync(join(dir, "pyproject.toml"))) {
+    return [
+      "      - uses: astral-sh/setup-uv@v7",
+      "        with:",
+      "          enable-cache: true",
+      `          cache-dependency-glob: ${dir}/uv.lock`,
+      "      - run: uv sync --locked",
+      "      - run: uv run ruff check",
+      "      - run: uv run ruff format --check",
+      "      - run: uv run pytest",
+    ];
+  }
   // Nix projects: a package (default.nix) is built from the flake; the NixOS
   // module (module.nix) is checked by evaluating it.
   if (existsSync(join(dir, "default.nix")) || existsSync(join(dir, "module.nix"))) {
@@ -138,6 +150,7 @@ function lang(dir) {
   if (existsSync(join(dir, "Cargo.toml"))) return "rust";
   if (existsSync(join(dir, "go.mod"))) return "go";
   if (existsSync(join(dir, "package.json"))) return "js";
+  if (existsSync(join(dir, "pyproject.toml"))) return "python";
   if (existsSync(join(dir, "default.nix")) || existsSync(join(dir, "module.nix"))) return "nix";
   return null;
 }
@@ -154,7 +167,7 @@ function labeler() {
     ["app/activity", ["go/**"]],
     ["app/status-worker", ["web/status-worker/**"]],
   ];
-  const byLang = { rust: ["crates/**"], go: ["go/**"], js: ["web/**"], nix: ["flake.nix", "nix/**"] };
+  const byLang = { rust: ["crates/**"], go: ["go/**"], js: ["web/**"], python: [], nix: ["flake.nix", "nix/**"] };
   for (const name of pkgs) {
     const l = lang(`pkgs/${name}`);
     if (!l) continue;
