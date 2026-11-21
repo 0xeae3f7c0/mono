@@ -41,7 +41,7 @@ jobs:
           - { package: badges-image, image: badges }
     steps:
       - uses: actions/checkout@v7
-      - uses: DeterminateSystems/nix-installer-action@v20
+      - uses: DeterminateSystems/nix-installer-action@v23
       - run: nix build ".#${{ matrix.package }}" --print-build-logs
       - name: Push to GHCR
         env:
