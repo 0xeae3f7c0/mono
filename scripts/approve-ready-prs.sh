@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # repository tooling (scripts/)
-# Approves and merges open pull requests from bot accounts (Dependabot,
-# github-actions) once they are ready: not a draft, no merge conflicts and every
-# check finished without failing. Majors included.
+# Approves and merges every open pull request (bots and people alike) once it
+# is ready: not a draft, no merge conflicts and every check finished without
+# failing. Majors included. GitHub does not let an account approve its own pull
+# request, so PRs opened by the approving account are merged without one.
 #
 # Order per PR: all checks green -> start review (pending) -> approve ->
 # submit the approved review -> merge.
@@ -21,11 +22,12 @@ dry_run=${DRY_RUN:-false}
 # cannot read /user, so that case is github-actions.
 approver=$(GH_TOKEN=$APPROVE_TOKEN gh api user --jq .login 2>/dev/null || echo github-actions)
 
-prs=$(gh pr list --repo "$repo" --state open --limit 200 \
+prs=$(gh pr list --repo "$repo" --state open --limit 1000 \
   --json number,author,isDraft \
-  --jq '.[] | select(.author.is_bot and (.isDraft | not)) | .number')
+  --jq '.[] | select(.isDraft | not) | "\(.number) \(.author.login)"')
 
-for pr in $prs; do
+while read -r pr author <&3; do
+  [[ -n $pr ]] || continue
   info=$(gh pr view "$pr" --repo "$repo" \
     --json title,mergeable,files,statusCheckRollup,reviews,additions,deletions)
   title=$(jq -r .title <<<"$info")
@@ -52,7 +54,7 @@ for pr in $prs; do
   fi
 
   approved=$(jq --arg me "$approver" '[.reviews[] | select(.author.login == $me and .state == "APPROVED")] | length' <<<"$info")
-  if (( approved == 0 )); then
+  if (( approved == 0 )) && [[ $author != "$approver" ]]; then
     files=$(jq -r '.files[] | "- `\(.path)` (+\(.additions)/-\(.deletions))"' <<<"$info")
     body=$(printf 'Automated approval: all %s checks passed and the branch has no conflicts.\n\nChanged files:\n%s\n\n_Posted by %s; no person reviewed this change._' \
       "$total" "$files" ".github/workflows/approve-ready-prs.yml")
@@ -78,4 +80,4 @@ for pr in $prs; do
   # --auto also works when a merge queue is required: the PR joins the queue.
   [[ $dry_run == true ]] || gh pr merge "$pr" --repo "$repo" --squash --auto --subject "$title (#$pr)" --body "" \
     || echo "#$pr: merge failed, will retry next run"
-done
+done 3<<<"$prs"

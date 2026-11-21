@@ -1,11 +1,16 @@
-name: Dependabot Auto Merge
+name: Auto Merge
 
-# Enables auto-merge on Dependabot patch and minor updates so they land once
-# required checks pass. Major updates are labelled and left for manual review.
+# Enables auto-merge on every non-draft pull request (Dependabot, release-please,
+# scripts/update-deps.sh and people alike), majors included, so each one lands as
+# soon as the required checks on main pass. Dependabot majors also get the
+# deps/major label. approve-ready-prs.yml adds the approval once checks are green.
+#
+# Auto-merge only waits for checks that branch protection marks as required;
+# without required checks GitHub merges right away.
 
 on:
   pull_request:
-    types: [opened, reopened, synchronize]
+    types: [opened, reopened, ready_for_review, synchronize]
 
 permissions:
   contents: write
@@ -13,13 +18,13 @@ permissions:
 
 jobs:
   auto-merge:
-    if: github.event.pull_request.user.login == 'dependabot[bot]'
+    if: ${{ !github.event.pull_request.draft }}
     runs-on: ubuntu-latest
     steps:
       - id: meta
+        if: github.event.pull_request.user.login == 'dependabot[bot]'
         uses: dependabot/fetch-metadata@v3
-      - name: Enable auto-merge for patch and minor updates
-        if: steps.meta.outputs.update-type != 'version-update:semver-major'
+      - name: Enable auto-merge
         env:
           GH_TOKEN: ${{ secrets.OWNER_TOKEN || secrets.GITHUB_TOKEN }}
           PR: ${{ github.event.pull_request.html_url }}

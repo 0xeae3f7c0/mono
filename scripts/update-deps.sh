@@ -89,12 +89,13 @@ propose() {
   gh pr create --base "$BASE" --head "$branch" --title "$title" \
     --body "Automated update of \`$pkg\` ($old -> $new) in \`$dir\`." \
     --label kind/deps --label "lang/$lang" --label "app/$app" --label source/update-deps \
-    --label "$semver" || return 0
-  opened=$((opened + 1))
-  # Major updates wait for a human; everything else auto-merges once required
-  # checks pass (needs "Allow auto-merge" enabled in the repository settings).
-  [[ "$semver" == deps/major ]] && return 0
-  gh pr merge "$branch" --auto --rebase || echo "::warning::Auto-merge unavailable; $branch left open."
+    --label "$semver" && opened=$((opened + 1))
+  # Every update, majors included, auto-merges once required checks pass (needs
+  # "Allow auto-merge" in the repository settings). This also runs when the PR
+  # already existed and its branch was just updated. Squash, like
+  # dependabot-auto-merge.yml, so the PR title becomes the commit on main.
+  gh pr merge "$branch" --auto --squash --subject "$title" --body "" ||
+    echo "::warning::Auto-merge unavailable; $branch left open."
 }
 
 projects() { git ls-files -- "*$1" | xargs -r -n1 dirname | sort -u; }
