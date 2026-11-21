@@ -1,0 +1,12 @@
+{
+  "schedule": "weekly",
+  "aggressiveCompression": "false",
+  "compressWiki": "false",
+  "minKBReduced": 2,
+  "prTitle": "chore(images): compress images",
+  "prBody": "Lossless image compression by ImgBot (https://imgbot.net). Install the app at https://github.com/apps/imgbot.",
+  "ignoredFiles": [
+    "pkgs/dashboard/src/stories/assets/*",
+    "pkgs/docs/blog/**"
+  ]
+}
