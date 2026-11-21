@@ -7,12 +7,13 @@ reviews:
   request_changes_workflow: false
   high_level_summary: true
   poem: false
+  # Reviews are requested by .github/workflows/coderabbit.yml, which comments
+  # "@coderabbitai review" on every non-draft PR and each new push, so automatic
+  # reviews are off to avoid reviewing twice.
   auto_review:
-    enabled: true
+    enabled: false
     drafts: false
     base_branches: [main]
-    # Dependency bumps and release PRs are generated; CI covers them.
-    ignore_title_keywords: ["(deps)", "/deps)", "chore(release)"]
   # Lockfiles and generated files are not worth reviewing line by line.
   path_filters:
     - "!**/Cargo.lock"
