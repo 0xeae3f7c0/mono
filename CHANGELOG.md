@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.6.0](https://github.com/0xeae3f7c0/mono/compare/v0.5.1...v0.6.0) (2026-11-21)
+
+
+### Features
+
+* **pkgs:** add lint and audit tool packages ([3c57f4a](https://github.com/0xeae3f7c0/mono/commit/3c57f4a7b271418fc18af1a0defc8c56b92ef469))
+* **repo-settings:** manage main ruleset in OpenTofu ([28a1940](https://github.com/0xeae3f7c0/mono/commit/28a19402da90f11416ec66dd47da5272a4ea243f))
+
 ## [0.5.1](https://github.com/0xeae3f7c0/mono/compare/v0.5.0...v0.5.1) (2026-11-21)
 
 
