@@ -67,6 +67,10 @@ propose() {
   shift 6
   local name slugpkg prefix branch
   name=$([[ "$dir" == "." ]] && echo root || basename "$dir")
+  # Labels use the project names from scripts/labels.mjs: the root workspace is
+  # the CLI and go/ is the activity tool.
+  local app=$name
+  case "$dir" in . | flake) app=cli ;; go) app=activity ;; esac
   slugpkg=${pkg//\//-}
   prefix="deps/$name/$eco-$slugpkg-"
   branch="$prefix${new#v}"
@@ -82,7 +86,7 @@ propose() {
   git push --quiet --force origin "HEAD:refs/heads/$branch"
   gh pr create --base "$BASE" --head "$branch" --title "$title" \
     --body "Automated update of \`$pkg\` ($old -> $new) in \`$dir\`." \
-    --label kind/deps --label "lang/$lang" --label "app/$name" --label source/update-deps \
+    --label kind/deps --label "lang/$lang" --label "app/$app" --label source/update-deps \
     --label "$semver" || return 0
   opened=$((opened + 1))
   # Major updates wait for a human; everything else auto-merges once required
