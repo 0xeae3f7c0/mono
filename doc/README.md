@@ -111,7 +111,7 @@ Times are UTC. Workflows with a schedule can also be started from the Actions ta
 | Merge Waiting Dependency PRs | every 4 hours | Merges dependency pull requests older than 3 hours with no failing checks. Majors wait for review. |
 | Dependabot | daily | GitHub Actions versions; patch and minor updates squash-merge automatically. |
 | Dependabot Alerts to Issues | every 4 hours | One issue per open security alert (`kind/security`, `app/<project>`, priority by severity); closes when the alert is fixed or dismissed. |
-| Code Scanning Alerts to Issues | every 4 hours | One issue per open code scanning alert (CodeQL, Scorecard; `kind/security`, `source/code-scanning`, `app/<project>`, priority by severity); closes when the alert is fixed or dismissed. |
+| Code Scanning Alerts to Issues | every 4 hours | One issue per code scanning rule with open alerts, listing each location (CodeQL, Scorecard; `kind/security`, `source/code-scanning`, `app/<project>`, priority by severity); closes when none are left. |
 
 ### Housekeeping
 
