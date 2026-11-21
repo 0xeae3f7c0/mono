@@ -4,7 +4,7 @@ Everything that used to live in the top-level README, in one place.
 
 - [Layout](#layout)
 - [Projects](#projects)
-- [Run locally](#run-locally)
+- [Run locally](#run-locally) (including the root shortcut scripts)
 - [Automation](#automation)
 - [Repository settings](#repository-settings)
 
@@ -58,6 +58,15 @@ cargo run -- check
 
 Each project in `pkgs/` runs on its own: `cargo test` (Rust), `go test ./...` (Go),
 `npm ci && npm run ci` (npm) or `yarn install && yarn ci` (`pkgs/portal`).
+
+Shortcut scripts at the root do the same; any prefix of the name works:
+
+```bash
+./check            # or ./c, ./ch, ./che, ./chec: root checks
+./check webhooks   # one project's checks
+./gen --check      # or ./g, ./ge: generated files are current
+./deps             # or ./d, ./de, ./dep: unique dependency counts
+```
 
 Review changed files against a fetched base branch:
 
