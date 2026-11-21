@@ -539,6 +539,20 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
+  name: vuln-scan
+  description: "Scans every lockfile in the monorepo (Cargo, Go, npm, Yarn) for known vulnerabilities with OSV-Scanner, offline from Dependabot. Run `commit-vuln-scan [dir]` (defaults to the current directory)."
+  annotations:
+    github.com/project-slug: 0xeae3f7c0/mono
+    backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/vuln-scan
+spec:
+  type: tool
+  lifecycle: production
+  owner: platform
+  system: commit
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
   name: webhooks
   description: "receives GitHub webhooks, verifies their HMAC signature (X-Hub-Signature-256) and forwards push, pull_request, workflow_run and release events to events-api. Exposes Prometheus metrics at /metrics."
   annotations:
