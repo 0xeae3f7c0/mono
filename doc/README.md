@@ -142,6 +142,31 @@ GitHub Apps (install once; their settings are in the repository root):
 | Codecov (coverage comments) | `codecov.yml` | https://github.com/apps/codecov |
 | ImgBot (image compression) | `.imgbotconfig` | https://github.com/apps/imgbot |
 
+### External trigger (cron-job.org)
+
+GitHub drops scheduled runs when it is busy. Schedule Watchdog
+(`schedule-watchdog.yml`) re-dispatches any 4-hourly workflow that is overdue, and
+an external cron at https://cron-job.org starts the watchdog itself, so it runs even
+when GitHub skips its own schedule.
+
+1. Create a fine-grained personal access token: repository access **only
+   `0xeae3f7c0/mono`**, permission **Actions: Read and write**, nothing else. Set an
+   expiry and renew it.
+2. In cron-job.org, create a job:
+
+   | Field | Value |
+   |---|---|
+   | URL | `https://api.github.com/repos/0xeae3f7c0/mono/actions/workflows/schedule-watchdog.yml/dispatches` |
+   | Schedule | every hour, minute 35 (between the watchdog's own :05 runs) |
+   | Request method | `POST` |
+   | Headers | `Authorization: Bearer <token>`, `Accept: application/vnd.github+json`, `X-GitHub-Api-Version: 2026-03-10` |
+   | Body | `{"ref":"main"}` |
+
+3. Use **Test run**: a `204` response means the watchdog was dispatched.
+
+The watchdog only dispatches workflows whose last run is 4 or more hours old, so
+extra triggers never cause duplicate maintenance runs.
+
 ## Repository settings
 
 1. Add an `OWNER_TOKEN` secret (personal access token with `repo` scope) so automated
