@@ -45,6 +45,12 @@ Use [Conventional Commits](https://www.conventionalcommits.org/) with a subject 
 characters or fewer, for example `fix(webhooks): reject unsigned payloads`. Dependency
 pull requests follow the same format automatically.
 
+## Sign-off and license
+
+Contributions are dual-licensed `MIT OR Apache-2.0` and certified with the
+[Developer Certificate of Origin](DCO-1.1): add `-s` to `git commit` so the message
+ends with `Signed-off-by: Your Name <you@example.com>`. See [`COPYRIGHT.md`](COPYRIGHT.md).
+
 ## Guidelines
 
 Keep changes focused, include regression tests for behaviour changes, update

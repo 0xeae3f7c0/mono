@@ -1,0 +1,21 @@
+{
+  // Codespaces / VS Code dev container: the Nix-built image from pkgs/devcontainer,
+  // published by .github/workflows/publish-images.yml, with every toolchain installed.
+  "name": "commit",
+  "image": "ghcr.io/0xeae3f7c0/mono/devcontainer:latest",
+  "remoteUser": "root",
+  "workspaceFolder": "/workspaces/mono",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "rust-lang.rust-analyzer",
+        "golang.go",
+        "jnoortheen.nix-ide",
+        "dbaeumer.vscode-eslint",
+        "tamasfe.even-better-toml"
+      ]
+    }
+  },
+  // Yarn (pkgs/portal) through corepack, into a directory on PATH.
+  "postCreateCommand": "corepack enable --install-directory /usr/local/bin 2>/dev/null || corepack enable"
+}

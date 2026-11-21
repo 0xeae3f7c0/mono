@@ -4,7 +4,7 @@ Everything that used to live in the top-level README, in one place.
 
 - [Layout](#layout)
 - [Projects](#projects)
-- [Run locally](#run-locally)
+- [Run locally](#run-locally) (including the root shortcut scripts)
 - [Automation](#automation)
 - [Repository settings](#repository-settings)
 
@@ -42,6 +42,15 @@ node scripts/gen-catalog.mjs         # Backstage catalog in pkgs/portal
 CI fails if either output is stale. `node scripts/count-deps.mjs` prints unique locked
 dependencies per ecosystem.
 
+**Nix projects** are folders with a `default.nix` (a package) or `module.nix` (the
+NixOS module). The flake finds them automatically (`nix/pkgs.nix`), so
+`nix build .#<name>` works for each. Packages that build a pinned upstream release
+(`vuln-scan`, `sbom`, `actions-lint`, `helm-check`) set `version` and source hashes in
+`default.nix`; Repository Maintenance runs `nix-update` (through `nix/update.nix`) and
+opens one pull request per new release. Container images (`devcontainer`,
+`ci-runner-image` and the service images) are pushed to GitHub Container Registry by
+`publish-images.yml`.
+
 ## Run locally
 
 Install stable Rust (https://rustup.rs), Go and Node.js 22+.
@@ -58,6 +67,15 @@ cargo run -- check
 
 Each project in `pkgs/` runs on its own: `cargo test` (Rust), `go test ./...` (Go),
 `npm ci && npm run ci` (npm) or `yarn install && yarn ci` (`pkgs/portal`).
+
+Shortcut scripts at the root do the same; any prefix of the name works:
+
+```bash
+./check            # or ./c, ./ch, ./che, ./chec: root checks
+./check webhooks   # one project's checks
+./gen --check      # or ./g, ./ge: generated files are current
+./deps             # or ./d, ./de, ./dep: unique dependency counts
+```
 
 Review changed files against a fetched base branch:
 
@@ -87,9 +105,10 @@ Times are UTC. Workflows with a schedule can also be started from the Actions ta
 
 | Workflow | When | What it does |
 |---|---|---|
-| Repository Maintenance | every 4 hours | One pull request per dependency version across every Cargo, Go, npm and Backstage project. Patch and minor updates auto-merge; npm updates that break peer dependencies are skipped. |
+| Repository Maintenance | every 4 hours | One pull request per dependency version across every Cargo, Go, npm and Backstage project, and per Nix flake input. Patch and minor updates auto-merge; npm updates that break peer dependencies are skipped. |
 | Merge Waiting Dependency PRs | every 4 hours | Merges dependency pull requests older than 3 hours with no failing checks. Majors wait for review. |
 | Dependabot | daily | GitHub Actions versions; patch and minor updates squash-merge automatically. |
+| Dependabot Alerts to Issues | every 4 hours | One issue per open security alert (`kind/security`, `app/<project>`, priority by severity); closes when the alert is fixed or dismissed. |
 
 ### Housekeeping
 

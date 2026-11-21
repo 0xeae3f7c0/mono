@@ -67,6 +67,11 @@ propose() {
   shift 6
   local name slugpkg prefix branch
   name=$([[ "$dir" == "." ]] && echo root || basename "$dir")
+  [[ "$eco" == nix ]] && name=flake
+  # Labels use the project names from scripts/labels.mjs: the root workspace is
+  # the CLI and go/ is the activity tool.
+  local app=$name
+  case "$dir" in . | flake) app=cli ;; go) app=activity ;; esac
   slugpkg=${pkg//\//-}
   prefix="deps/$name/$eco-$slugpkg-"
   branch="$prefix${new#v}"
@@ -76,13 +81,14 @@ propose() {
   git diff --quiet && return 0
 
   local title="chore($name/deps): $pkg $old -> $new" semver
-  semver=$(semver_label "$old" "$new")
+  # Flake inputs are pinned to commits, not semver releases.
+  if [[ "$eco" == nix ]]; then semver=deps/minor; else semver=$(semver_label "$old" "$new"); fi
   git add -A
   git commit --quiet -m "$title"
   git push --quiet --force origin "HEAD:refs/heads/$branch"
   gh pr create --base "$BASE" --head "$branch" --title "$title" \
     --body "Automated update of \`$pkg\` ($old -> $new) in \`$dir\`." \
-    --label kind/deps --label "lang/$lang" --label "app/$name" --label source/update-deps \
+    --label kind/deps --label "lang/$lang" --label "app/$app" --label source/update-deps \
     --label "$semver" || return 0
   opened=$((opened + 1))
   # Major updates wait for a human; everything else auto-merges once required
@@ -131,6 +137,41 @@ for dir in $(projects package-lock.json); do
     propose "$dir" npm "$pkg" "v$old" "v$new" js sh -c       "npm install $dev --no-audit --no-fund --ignore-scripts '$pkg@$new' && npm ls --all >/dev/null 2>&1 || { echo '::warning::Skipping $pkg@$new in $dir: unmet peer dependencies'; exit 1; }"
   done <<<"$changes"
 done
+
+# Nix flake inputs: one PR per input whose locked commit moved, e.g.
+# "chore(flake/deps): nixpkgs a1b2c3d -> e4f5a6b". The first run adds flake.lock.
+if [[ -f flake.nix ]] && command -v nix >/dev/null; then
+  if [[ ! -f flake.lock ]]; then
+    propose . nix flake.lock none initial nix nix flake lock
+  else
+    for input in $(jq -r '.nodes.root.inputs | keys[]' flake.lock); do
+      rev() { jq -r --arg i "$input" '.nodes[.nodes.root.inputs[$i]].locked.rev // empty' flake.lock | cut -c1-7; }
+      old=$(rev)
+      sync_base
+      nix flake update "$input" >/dev/null 2>&1 || continue
+      new=$(rev)
+      git checkout -- flake.lock
+      [[ -n "$old" && -n "$new" && "$old" != "$new" ]] || continue
+      propose . nix "$input" "$old" "$new" nix nix flake update "$input"
+    done
+  fi
+fi
+
+# Nix packages in pkgs/ that build a pinned upstream release (a `version` plus
+# a source hash in default.nix): nix-update bumps version and hashes, one PR each.
+if command -v nix >/dev/null; then
+  for file in $(git ls-files -- 'pkgs/*/default.nix'); do
+    grep -qE '^\s*version = "' "$file" || continue
+    name=$(basename "$(dirname "$file")")
+    old=$(sed -nE 's/^\s*version = "([^"]+)";/\1/p' "$file" | head -1)
+    sync_base
+    nix run nixpkgs#nix-update -- -f nix/update.nix "$name" >/dev/null 2>&1 || continue
+    new=$(sed -nE 's/^\s*version = "([^"]+)";/\1/p' "$file" | head -1)
+    git checkout -- "pkgs/$name"
+    [[ -n "$new" && "$new" != "$old" ]] || continue
+    propose "pkgs/$name" nix-update "$name" "v$old" "v$new" nix sh -c "cd ../.. && nix run nixpkgs#nix-update -- -f nix/update.nix $name --version $new"
+  done
+fi
 
 # Backstage apps (Yarn workspaces) upgrade as a set: bump to the latest release.
 for dir in $(projects backstage.json); do

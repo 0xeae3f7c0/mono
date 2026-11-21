@@ -1,0 +1,49 @@
+# repository automation (.github/)
+name: Nix
+
+# Checks the flake: it evaluates on every system, the dev shell has every
+# toolchain, the Nix files are formatted, and each package builds.
+
+on:
+  push:
+    branches: [main]
+    paths: ["flake.nix", "flake.lock", "shell.nix", "nix/**", "rust-toolchain.toml", "Cargo.lock", "crates/**", "pkgs/events-api/**", "pkgs/badges/**", "pkgs/shortlinks/**", "pkgs/activity-rpc/**", ".github/workflows/nix.yml"]
+  pull_request:
+    paths: ["flake.nix", "flake.lock", "shell.nix", "nix/**", "rust-toolchain.toml", "Cargo.lock", "crates/**", "pkgs/events-api/**", "pkgs/badges/**", "pkgs/shortlinks/**", "pkgs/activity-rpc/**", ".github/workflows/nix.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nix-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  flake:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: DeterminateSystems/nix-installer-action@v20
+      - name: Evaluate and build the dev shell
+        run: |
+          nix flake check --all-systems --no-build
+          nix develop --command bash -c 'cargo --version && go version && node --version && just --version'
+      - name: Formatting (shows the diff if anything needs nix fmt)
+        run: |
+          nix fmt -- flake.nix shell.nix nix/*.nix
+          git diff --exit-code -- flake.nix shell.nix nix/
+
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package: [commit, events-api, badges, shortlinks, activity-rpc, events-api-image, badges-image]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: DeterminateSystems/nix-installer-action@v20
+      - run: nix build .#${{ matrix.package }} --print-build-logs
+      - name: Smoke test
+        if: ${{ !endsWith(matrix.package, '-image') }}
+        run: ls -l result/bin

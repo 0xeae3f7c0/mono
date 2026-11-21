@@ -21,6 +21,20 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
+  name: actions-lint
+  description: "Lints the repository's GitHub Actions workflows: actionlint for correctness (with ShellCheck for run: scripts) and zizmor for security issues such as over-broad token permissions and template injection. Run `commit-actions-lint` from the repository root."
+  annotations:
+    github.com/project-slug: 0xeae3f7c0/mono
+    backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/actions-lint
+spec:
+  type: tool
+  lifecycle: production
+  owner: platform
+  system: commit
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
   name: activity-rpc
   description: "Internal gRPC service (tonic) that answers \"how active is this repository?\" for other services, e.g. `webhooks` and `pipelines`. Messages and service are defined in Rust, so no protoc is needed."
   annotations:
@@ -133,6 +147,20 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
+  name: ci-runner-image
+  description: "Self-hosted GitHub Actions runner image with every monorepo toolchain, so CI jobs skip per-job installs. The entrypoint registers an ephemeral runner (one job, then exit) from RUNNER_URL and RUNNER_TOKEN; see README.md. Built with `nix build .#ci-runner-image` (a docker-archive tarball)."
+  annotations:
+    github.com/project-slug: 0xeae3f7c0/mono
+    backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/ci-runner-image
+spec:
+  type: tool
+  lifecycle: production
+  owner: platform
+  system: commit
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
   name: crawl
   description: "Collects release-note and changelog links from a dependency's web page, so dependency PRs can link to what changed. Lists links as absolute URLs."
   annotations:
@@ -168,6 +196,20 @@ metadata:
     backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/desktop
 spec:
   type: desktop-app
+  lifecycle: production
+  owner: platform
+  system: commit
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: devcontainer
+  description: "Development container image for Codespaces and VS Code dev containers, with every toolchain from the dev shell (Rust, Go, Node.js, just, lefthook, ...). Includes the glibc loader path and C++ runtime that the VS Code server needs. Built with `nix build .#devcontainer` (a docker-archive tarball)."
+  annotations:
+    github.com/project-slug: 0xeae3f7c0/mono
+    backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/devcontainer
+spec:
+  type: tool
   lifecycle: production
   owner: platform
   system: commit
@@ -259,6 +301,20 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
+  name: helm-check
+  description: "Validates the deploy chart (deploy/helm/commit): `helm lint`, then renders it and checks every manifest against the Kubernetes schemas with kubeconform. Run `commit-helm-check [chart-dir]` from the repository root."
+  annotations:
+    github.com/project-slug: 0xeae3f7c0/mono
+    backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/helm-check
+spec:
+  type: tool
+  lifecycle: production
+  owner: platform
+  system: commit
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
   name: helm-render
   description: "renders the platform's Helm chart (deploy/helm/commit) with its default values and prints each manifest, so deployment changes can be reviewed as plain YAML in pull requests."
   annotations:
@@ -287,6 +343,20 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
+  name: integration-test
+  description: "End-to-end test: boots a NixOS VM with the nixos-module services, records an event through events-api, reads it back, and fetches a badge from badges. Build it with `nix build .#integration-test` (Linux with KVM)."
+  annotations:
+    github.com/project-slug: 0xeae3f7c0/mono
+    backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/integration-test
+spec:
+  type: tool
+  lifecycle: production
+  owner: platform
+  system: commit
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
   name: minify
   description: "Minifies the embeddable `widget` script with SWC before it is published, keeping the snippet sites paste into their pages small."
   annotations:
@@ -308,6 +378,20 @@ metadata:
     backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/mobile
 spec:
   type: mobile-app
+  lifecycle: production
+  owner: platform
+  system: commit
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: nixos-module
+  description: "NixOS module that runs the commit platform services as hardened systemd units: services.commit.events-api (SQLite in /var/lib) and services.commit.badges. Exposed by the flake as nixosModules.default."
+  annotations:
+    github.com/project-slug: 0xeae3f7c0/mono
+    backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/nixos-module
+spec:
+  type: tool
   lifecycle: production
   owner: platform
   system: commit
@@ -371,6 +455,20 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
+  name: repo-tools
+  description: "The repository's own scripts as commands with pinned dependencies, so they behave the same locally and in CI: commit-gen, commit-deps, commit-labels and commit-update-deps. Run them from the repository root."
+  annotations:
+    github.com/project-slug: 0xeae3f7c0/mono
+    backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/repo-tools
+spec:
+  type: tool
+  lifecycle: production
+  owner: platform
+  system: commit
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
   name: reports
   description: "Browse archived commit weekly reports (Nuxt)"
   annotations:
@@ -418,6 +516,20 @@ metadata:
   annotations:
     github.com/project-slug: 0xeae3f7c0/mono
     backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/runner-monitor
+spec:
+  type: tool
+  lifecycle: production
+  owner: platform
+  system: commit
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: sbom
+  description: "Writes a CycloneDX software bill of materials for the root workspace and every project in pkgs/ with Syft: one sbom/<name>.cdx.json per project. Run `commit-sbom [output-dir]` from the repository root."
+  annotations:
+    github.com/project-slug: 0xeae3f7c0/mono
+    backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/sbom
 spec:
   type: tool
   lifecycle: production
@@ -530,6 +642,20 @@ metadata:
   annotations:
     github.com/project-slug: 0xeae3f7c0/mono
     backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/visualizer
+spec:
+  type: tool
+  lifecycle: production
+  owner: platform
+  system: commit
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: vuln-scan
+  description: "Scans every lockfile in the monorepo (Cargo, Go, npm, Yarn) for known vulnerabilities with OSV-Scanner, offline from Dependabot. Run `commit-vuln-scan [dir]` (defaults to the current directory)."
+  annotations:
+    github.com/project-slug: 0xeae3f7c0/mono
+    backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/vuln-scan
 spec:
   type: tool
   lifecycle: production

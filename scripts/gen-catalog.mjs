@@ -27,6 +27,10 @@ function describe(dir) {
   if (existsSync(cargo)) return firstDocLine(readFileSync(cargo, "utf8"), /^\/\/! ?(.*)$/);
   const go = join(dir, "main.go");
   if (existsSync(go)) return firstDocLine(readFileSync(go, "utf8"), /^\/\/ ?(.*)$/);
+  for (const nix of ["default.nix", "module.nix"]) {
+    const file = join(dir, nix);
+    if (existsSync(file)) return firstDocLine(readFileSync(file, "utf8"), /^# ?(.*)$/);
+  }
   return "";
 }
 
@@ -44,6 +48,7 @@ function firstDocLine(text, re) {
 
 function type(name, dir) {
   if (roles[name]) return roles[name];
+  if (existsSync(join(dir, "default.nix")) || existsSync(join(dir, "module.nix"))) return "tool";
   if (existsSync(join(dir, "go.mod")) || existsSync(join(dir, "Cargo.toml"))) {
     return /\b(serve|listen|HTTP|API|gRPC|Worker|worker)\b/.test(describe(dir)) ? "service" : "tool";
   }
