@@ -1,0 +1,15 @@
+# Socket supply-chain checks (https://socket.dev). Install the GitHub App
+# (https://github.com/apps/socket-security) for this repository to enable it.
+# On pull requests that add or change dependencies it comments about risky
+# packages: install scripts, typosquats, new maintainers, telemetry, obfuscation.
+version: 2
+
+githubApp:
+  enabled: true
+  pullRequestAlertsEnabled: true
+  dependencyOverviewEnabled: true
+  projectReportsEnabled: true
+
+# Scaffolding copied as a Backstage software template, not a real project.
+projectIgnorePaths:
+  - "pkgs/portal/examples/template/content"
