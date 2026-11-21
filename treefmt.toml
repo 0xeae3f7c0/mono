@@ -1,0 +1,17 @@
+# One command formats the repository: `treefmt` (https://treefmt.com).
+# Each project's own formatter config (rustfmt, gofmt, prettier) still applies.
+
+[formatter.rust]
+command = "rustfmt"
+options = ["--edition", "2024"]
+includes = ["*.rs"]
+excludes = ["target/**"]
+
+[formatter.go]
+command = "gofmt"
+options = ["-w"]
+includes = ["*.go"]
+
+[formatter.nix]
+command = "nixfmt"
+includes = ["*.nix"]

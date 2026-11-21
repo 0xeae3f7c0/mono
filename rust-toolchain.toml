@@ -1,0 +1,6 @@
+# Rust toolchain for the root workspace and every project in pkgs/ (rustup
+# reads this from the nearest parent directory).
+[toolchain]
+channel = "stable"
+components = ["rustfmt", "clippy"]
+profile = "minimal"

@@ -1,0 +1,4 @@
+# ShellCheck defaults for scripts/ and the root shortcut scripts.
+shell=bash
+enable=require-variable-braces
+external-sources=true

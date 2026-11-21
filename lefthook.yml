@@ -1,0 +1,20 @@
+# Git hooks (https://lefthook.dev). Install once with `lefthook install`.
+pre-commit:
+  parallel: true
+  commands:
+    rust-fmt:
+      glob: "crates/**/*.rs"
+      run: cargo fmt --all -- --check
+    go-fmt:
+      glob: "*.go"
+      run: test -z "$(gofmt -l {staged_files})"
+    generated:
+      glob: "{pkgs/*/package.json,pkgs/*/Cargo.toml,pkgs/*/go.mod,scripts/gen-*.mjs}"
+      run: node scripts/gen-pkg-workflows.mjs --check && node scripts/gen-catalog.mjs --check
+
+commit-msg:
+  commands:
+    conventional:
+      # Conventional Commit subject, e.g. "fix(webhooks): reject unsigned payloads"
+      run: |
+        grep -qE '^(feat|fix|chore|ci|docs|refactor|perf|test|build|style|revert)(\([^)]+\))?!?: .+' {1}
