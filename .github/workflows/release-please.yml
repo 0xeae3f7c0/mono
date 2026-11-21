@@ -1,0 +1,32 @@
+name: Release Please
+
+# Keeps a "chore(main): release X.Y.Z" pull request open with the next version
+# and a changelog generated from Conventional Commits. Merging it tags vX.Y.Z,
+# which triggers release.yml to build and attach the CLI binaries.
+#
+# Uses OWNER_TOKEN so the tag push triggers release.yml (pushes made with the
+# default GITHUB_TOKEN do not start other workflows).
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: release-please
+  cancel-in-progress: false
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v5
+        with:
+          token: ${{ secrets.OWNER_TOKEN }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
