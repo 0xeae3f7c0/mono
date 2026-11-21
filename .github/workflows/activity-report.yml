@@ -31,6 +31,6 @@ jobs:
         run: |
           {
             echo '```'
-            go run ./cmd/activity -repo .. -since "$SINCE"
+            go run ./cmd/activity --repo .. --since "$SINCE"
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
