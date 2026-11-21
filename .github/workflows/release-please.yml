@@ -26,7 +26,33 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: googleapis/release-please-action@v5
+        id: release
         with:
           token: ${{ secrets.OWNER_TOKEN }}
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
+
+      # release-please bumps the version in Cargo.toml, but its Cargo.lock
+      # extra-files edits do not always apply, which leaves the lockfile stale
+      # and makes every `--locked` cargo step on the release PR fail. Refresh
+      # only the workspace's own entries on the release branch.
+      - name: Check out the release PR branch
+        if: ${{ steps.release.outputs.pr }}
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ fromJSON(steps.release.outputs.pr).headBranchName }}
+          token: ${{ secrets.OWNER_TOKEN }}
+      - if: ${{ steps.release.outputs.pr }}
+        uses: dtolnay/rust-toolchain@stable
+      - name: Sync Cargo.lock
+        if: ${{ steps.release.outputs.pr }}
+        run: |
+          cargo update --workspace
+          if git diff --quiet Cargo.lock; then
+            echo "Cargo.lock already matches Cargo.toml"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "chore(release): sync Cargo.lock"
+          git push
