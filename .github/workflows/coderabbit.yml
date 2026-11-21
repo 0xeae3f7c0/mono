@@ -36,6 +36,16 @@ jobs:
           # A full review on open, an incremental one for new commits.
           if [[ "$ACTION" == "synchronize" ]]; then
             command="@coderabbitai review"
+            # CodeRabbit answers "@coderabbitai review" with this note when it is
+            # already reviewing new commits automatically; asking again only
+            # repeats the note, so stop sending the command on this PR.
+            note="is an incremental review system and does not re-review already reviewed commits"
+            if gh api --paginate "repos/$GITHUB_REPOSITORY/issues/$PR/comments" \
+              --jq '.[] | select(.user.login | startswith("coderabbitai")) | .body' \
+              | grep -qF "$note"; then
+              echo "CodeRabbit reviews new commits automatically on #$PR; not sending $command"
+              exit 0
+            fi
           else
             command="@coderabbitai full review"
           fi
