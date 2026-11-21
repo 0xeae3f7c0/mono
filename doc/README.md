@@ -96,7 +96,7 @@ Times are UTC. Workflows with a schedule can also be started from the Actions ta
 
 | Workflow | When | What it does |
 |---|---|---|
-| Repository Maintenance | every 4 hours | One pull request per dependency version across every Cargo, Go, npm and Backstage project. Patch and minor updates auto-merge; npm updates that break peer dependencies are skipped. |
+| Repository Maintenance | every 4 hours | One pull request per dependency version across every Cargo, Go, npm and Backstage project, and per Nix flake input. Patch and minor updates auto-merge; npm updates that break peer dependencies are skipped. |
 | Merge Waiting Dependency PRs | every 4 hours | Merges dependency pull requests older than 3 hours with no failing checks. Majors wait for review. |
 | Dependabot | daily | GitHub Actions versions; patch and minor updates squash-merge automatically. |
 | Dependabot Alerts to Issues | every 4 hours | One issue per open security alert (`kind/security`, `app/<project>`, priority by severity); closes when the alert is fixed or dismissed. |

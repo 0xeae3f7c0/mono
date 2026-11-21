@@ -67,6 +67,7 @@ propose() {
   shift 6
   local name slugpkg prefix branch
   name=$([[ "$dir" == "." ]] && echo root || basename "$dir")
+  [[ "$eco" == nix ]] && name=flake
   # Labels use the project names from scripts/labels.mjs: the root workspace is
   # the CLI and go/ is the activity tool.
   local app=$name
@@ -80,7 +81,8 @@ propose() {
   git diff --quiet && return 0
 
   local title="chore($name/deps): $pkg $old -> $new" semver
-  semver=$(semver_label "$old" "$new")
+  # Flake inputs are pinned to commits, not semver releases.
+  if [[ "$eco" == nix ]]; then semver=deps/minor; else semver=$(semver_label "$old" "$new"); fi
   git add -A
   git commit --quiet -m "$title"
   git push --quiet --force origin "HEAD:refs/heads/$branch"
@@ -135,6 +137,25 @@ for dir in $(projects package-lock.json); do
     propose "$dir" npm "$pkg" "v$old" "v$new" js sh -c       "npm install $dev --no-audit --no-fund --ignore-scripts '$pkg@$new' && npm ls --all >/dev/null 2>&1 || { echo '::warning::Skipping $pkg@$new in $dir: unmet peer dependencies'; exit 1; }"
   done <<<"$changes"
 done
+
+# Nix flake inputs: one PR per input whose locked commit moved, e.g.
+# "chore(flake/deps): nixpkgs a1b2c3d -> e4f5a6b". The first run adds flake.lock.
+if [[ -f flake.nix ]] && command -v nix >/dev/null; then
+  if [[ ! -f flake.lock ]]; then
+    propose . nix flake.lock none initial nix nix flake lock
+  else
+    for input in $(jq -r '.nodes.root.inputs | keys[]' flake.lock); do
+      rev() { jq -r --arg i "$input" '.nodes[.nodes.root.inputs[$i]].locked.rev // empty' flake.lock | cut -c1-7; }
+      old=$(rev)
+      sync_base
+      nix flake update "$input" >/dev/null 2>&1 || continue
+      new=$(rev)
+      git checkout -- flake.lock
+      [[ -n "$old" && -n "$new" && "$old" != "$new" ]] || continue
+      propose . nix "$input" "$old" "$new" nix nix flake update "$input"
+    done
+  fi
+fi
 
 # Backstage apps (Yarn workspaces) upgrade as a set: bump to the latest release.
 for dir in $(projects backstage.json); do

@@ -44,6 +44,8 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: 24
+      # Nix for flake input updates (nix flake update <input>)
+      - uses: DeterminateSystems/nix-installer-action@v20
       - name: Configure owner identity
         env:
           GH_TOKEN: ${{ secrets.OWNER_TOKEN }}
