@@ -22,6 +22,12 @@ export function appLabel(manifest) {
   return "app/cli";
 }
 
+/** URL of the `rel="next"` page in a GitHub `Link` header, or null. */
+export function nextLink(header) {
+  const match = header?.split(",").find((part) => /rel="next"/.test(part))?.match(/<([^>]+)>/);
+  return match ? match[1] : null;
+}
+
 /** Issue title, labels and body for one alert. */
 export function issueFor(alert) {
   const pkg = alert.dependency.package;
@@ -67,8 +73,9 @@ async function main() {
   const dryRun = process.env.DRY_RUN === "true";
   if (!GH_TOKEN || !GITHUB_REPOSITORY) throw new Error("GH_TOKEN and GITHUB_REPOSITORY are required");
 
-  const api = async (path, init = {}) => {
-    const res = await fetch(`https://api.github.com/repos/${GITHUB_REPOSITORY}${path}`, {
+  const base = `https://api.github.com/repos/${GITHUB_REPOSITORY}`;
+  const request = async (url, init = {}) => {
+    const res = await fetch(url, {
       ...init,
       headers: {
         authorization: `Bearer ${GH_TOKEN}`,
@@ -76,16 +83,24 @@ async function main() {
         "user-agent": "alerts-to-issues",
       },
     });
-    if (!res.ok) throw new Error(`${init.method ?? "GET"} ${path}: ${res.status} ${await res.text()}`);
+    if (!res.ok) throw new Error(`${init.method ?? "GET"} ${url}: ${res.status} ${await res.text()}`);
+    return res;
+  };
+  const api = async (path, init = {}) => {
+    const res = await request(`${base}${path}`, init);
     return res.status === 204 ? null : res.json();
   };
+  // Follow `Link: rel="next"`; the Dependabot alerts API pages by cursor and
+  // rejects `page=` numbers, while issues accept either.
   const all = async (path) => {
     const out = [];
-    for (let page = 1; ; page++) {
-      const batch = await api(`${path}${path.includes("?") ? "&" : "?"}per_page=100&page=${page}`);
-      out.push(...batch);
-      if (batch.length < 100) return out;
+    let url = `${base}${path}${path.includes("?") ? "&" : "?"}per_page=100`;
+    while (url) {
+      const res = await request(url);
+      out.push(...(await res.json()));
+      url = nextLink(res.headers.get("link"));
     }
+    return out;
   };
 
   const alerts = await all("/dependabot/alerts?state=open");
