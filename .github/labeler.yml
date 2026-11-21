@@ -119,6 +119,9 @@ app/portal:
 app/repo-registry:
   - changed-files:
       - any-glob-to-any-file: ["pkgs/repo-registry/**"]
+app/repo-settings:
+  - changed-files:
+      - any-glob-to-any-file: ["pkgs/repo-settings/**"]
 app/repo-tools:
   - changed-files:
       - any-glob-to-any-file: ["pkgs/repo-tools/**"]
@@ -229,4 +232,4 @@ lang/rust:
       - any-glob-to-any-file: ["crates/**", "pkgs/activity-rpc/**", "pkgs/alerts-ui/**", "pkgs/archive/**", "pkgs/badges/**", "pkgs/crawl/**", "pkgs/desktop/**", "pkgs/events-api/**", "pkgs/forecast/**", "pkgs/gitstat/**", "pkgs/inspector/**", "pkgs/minify/**", "pkgs/plugin-host/**", "pkgs/repo-registry/**", "pkgs/reports-pdf/**", "pkgs/runner-monitor/**", "pkgs/search/**", "pkgs/shortlinks/**", "pkgs/sql/**", "pkgs/summarize/**", "pkgs/visualizer/**", "pkgs/weekly-page/**"]
 lang/terraform:
   - changed-files:
-      - any-glob-to-any-file: []
+      - any-glob-to-any-file: ["pkgs/repo-settings/**"]

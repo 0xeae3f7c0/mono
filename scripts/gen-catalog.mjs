@@ -27,6 +27,8 @@ function describe(dir) {
   if (existsSync(cargo)) return firstDocLine(readFileSync(cargo, "utf8"), /^\/\/! ?(.*)$/);
   const py = join(dir, "pyproject.toml");
   if (existsSync(py)) return readFileSync(py, "utf8").match(/^description = "(.*)"$/m)?.[1] ?? "";
+  const tf = join(dir, "main.tf");
+  if (existsSync(tf)) return firstDocLine(readFileSync(tf, "utf8"), /^# ?(.*)$/);
   const go = join(dir, "main.go");
   if (existsSync(go)) return firstDocLine(readFileSync(go, "utf8"), /^\/\/ ?(.*)$/);
   for (const nix of ["default.nix", "module.nix"]) {
@@ -51,6 +53,7 @@ function firstDocLine(text, re) {
 function type(name, dir) {
   if (roles[name]) return roles[name];
   if (existsSync(join(dir, "default.nix")) || existsSync(join(dir, "module.nix"))) return "tool";
+  if (existsSync(join(dir, "main.tf"))) return "infrastructure";
   if (existsSync(join(dir, "go.mod")) || existsSync(join(dir, "Cargo.toml")) || existsSync(join(dir, "pyproject.toml"))) {
     return /\b(serve|listen|HTTP|API|gRPC|Worker|worker)\b/.test(describe(dir)) ? "service" : "tool";
   }

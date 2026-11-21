@@ -19,6 +19,8 @@ const apt = {
   desktop: "libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev libxdo-dev",
 };
 
+const hasTf = (dir) => readdirSync(dir).some((f) => f.endsWith(".tf"));
+
 function steps(name, dir) {
   if (existsSync(join(dir, "Cargo.toml"))) {
     return [
@@ -81,6 +83,15 @@ function steps(name, dir) {
       "      - run: uv run ruff check",
       "      - run: uv run ruff format --check",
       "      - run: uv run pytest",
+    ];
+  }
+  // OpenTofu / Terraform configurations: formatted and validated, never applied.
+  if (hasTf(dir)) {
+    return [
+      "      - uses: opentofu/setup-opentofu@v2",
+      "      - run: tofu fmt -check -recursive",
+      "      - run: tofu init -backend=false -input=false",
+      "      - run: tofu validate",
     ];
   }
   // Nix projects: a package (default.nix) is built from the flake; the NixOS
@@ -151,6 +162,7 @@ function lang(dir) {
   if (existsSync(join(dir, "go.mod"))) return "go";
   if (existsSync(join(dir, "package.json"))) return "js";
   if (existsSync(join(dir, "pyproject.toml"))) return "python";
+  if (hasTf(dir)) return "terraform";
   if (existsSync(join(dir, "default.nix")) || existsSync(join(dir, "module.nix"))) return "nix";
   return null;
 }
@@ -167,7 +179,7 @@ function labeler() {
     ["app/activity", ["go/**"]],
     ["app/status-worker", ["web/status-worker/**"]],
   ];
-  const byLang = { rust: ["crates/**"], go: ["go/**"], js: ["web/**"], python: [], nix: ["flake.nix", "nix/**"] };
+  const byLang = { rust: ["crates/**"], go: ["go/**"], js: ["web/**"], python: [], terraform: [], nix: ["flake.nix", "nix/**"] };
   for (const name of pkgs) {
     const l = lang(`pkgs/${name}`);
     if (!l) continue;

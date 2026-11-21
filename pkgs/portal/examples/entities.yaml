@@ -553,6 +553,20 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
+  name: repo-settings
+  description: "Repository settings for the monorepo, kept as code: the main branch ruleset that makes auto-merge wait for CI. Apply by hand (see README.md); CI only formats and validates this configuration."
+  annotations:
+    github.com/project-slug: 0xeae3f7c0/mono
+    backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/repo-settings
+spec:
+  type: infrastructure
+  lifecycle: production
+  owner: platform
+  system: commit
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
   name: repo-tools
   description: "The repository's own scripts as commands with pinned dependencies, so they behave the same locally and in CI: commit-gen, commit-deps, commit-labels and commit-update-deps. Run them from the repository root."
   annotations:

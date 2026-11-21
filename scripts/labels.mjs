@@ -32,7 +32,7 @@ const groups = {
     web: "Browser and edge front ends",
     data: "Storage, analytics and search",
   }],
-  lang: ["5319e7", { rust: "Rust code", go: "Go code", js: "JavaScript / TypeScript code", python: "Python code", nix: "Nix expressions" }],
+  lang: ["5319e7", { rust: "Rust code", go: "Go code", js: "JavaScript / TypeScript code", python: "Python code", terraform: "OpenTofu / Terraform configuration", nix: "Nix expressions" }],
   deps: ["c5def5", { patch: "Patch version bump", minor: "Minor version bump", major: "Major version bump (manual review)" }],
   priority: ["d93f0b", { critical: "Drop everything", high: "Next up", normal: "Default", low: "When time allows" }],
   status: ["fbca04", {
