@@ -68,7 +68,9 @@ cargo run -- check
 Each project in `pkgs/` runs on its own: `cargo test` (Rust), `go test ./...` (Go),
 `npm ci && npm run ci` (npm) or `yarn install && yarn ci` (`pkgs/portal`).
 
-Shortcut scripts at the root do the same; any prefix of the name works:
+Shortcuts at the root do the same; any prefix of the name works. They are symlinks
+to `check.sh`, `gen.sh` and `deps.sh` (on Windows, enable `core.symlinks` or use
+the `.sh` names):
 
 ```bash
 ./check            # or ./c, ./ch, ./che, ./chec: root checks
