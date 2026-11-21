@@ -25,5 +25,5 @@ jobs:
         working-directory: pkgs/spell-check
     steps:
       - uses: actions/checkout@v7
-      - uses: DeterminateSystems/nix-installer-action@v20
+      - uses: DeterminateSystems/nix-installer-action@v23
       - run: nix build "../..#spell-check" --print-build-logs
