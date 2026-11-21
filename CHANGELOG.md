@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.3.1](https://github.com/0xeae3f7c0/mono/compare/v0.3.0...v0.3.1) (2026-11-21)
+
+
+### Bug Fixes
+
+* **build:** sync Cargo.lock to v0.3.0 ([afa9fab](https://github.com/0xeae3f7c0/mono/commit/afa9fabfd256cfafa4fb8aabf1756ef296b7b20b))
+* **deps:** bump @testing-library/jest-dom from 6.9.1 to 7.0.1 in /pkgs/portal ([#213](https://github.com/0xeae3f7c0/mono/issues/213)) ([35c8433](https://github.com/0xeae3f7c0/mono/commit/35c84334f23ace73cabc23be772ae6f99853a827))
+* **deps:** bump better-sqlite3 from 12.11.1 to 13.2.0 in /pkgs/portal ([#214](https://github.com/0xeae3f7c0/mono/issues/214)) ([96162ef](https://github.com/0xeae3f7c0/mono/commit/96162ef2311b2aa14cd18de117658767169af260))
+* **deps:** bump cross-env from 7.0.3 to 10.1.0 in /pkgs/portal ([#211](https://github.com/0xeae3f7c0/mono/issues/211)) ([5f67b41](https://github.com/0xeae3f7c0/mono/commit/5f67b41dc56461593e4576f3f6bfb5286fa37445))
+* **deps:** bump node-gyp from 10.3.1 to 13.1.0 in /pkgs/portal ([#212](https://github.com/0xeae3f7c0/mono/issues/212)) ([2392474](https://github.com/0xeae3f7c0/mono/commit/23924746026a5a5e9ce642c4ec293b758593f6ef))
+* **deps:** bump prettier from 2.8.8 to 3.10.1 in /pkgs/portal ([#210](https://github.com/0xeae3f7c0/mono/issues/210)) ([39e16aa](https://github.com/0xeae3f7c0/mono/commit/39e16aae8b529f5f163c7e43af076da53f95dee9))
+* **deps:** bump react-router-dom from 6.30.6 to 7.18.5 in /pkgs/portal ([#204](https://github.com/0xeae3f7c0/mono/issues/204)) ([2f3c394](https://github.com/0xeae3f7c0/mono/commit/2f3c394c5e57c1a1647c9397c28e6a570cc3c958))
+* **deps:** bump the react group across 1 directory with 3 updates ([#222](https://github.com/0xeae3f7c0/mono/issues/222)) ([7f453bd](https://github.com/0xeae3f7c0/mono/commit/7f453bdeb0b8a9dbbf68c8d8aa8bb919e152e9f5))
+* **deps:** bump the testing-library group across 1 directory with 2 updates ([#224](https://github.com/0xeae3f7c0/mono/issues/224)) ([9b69627](https://github.com/0xeae3f7c0/mono/commit/9b696274bcf6f00cdcdbfa30ea68f2923a4e01e4))
+* **deps:** bump the vitest group across 1 directory with 2 updates ([#220](https://github.com/0xeae3f7c0/mono/issues/220)) ([f84e14b](https://github.com/0xeae3f7c0/mono/commit/f84e14b35a68b854bf503ce31404f1f868a2b8a4))
+
 ## [0.3.0](https://github.com/0xeae3f7c0/mono/compare/v0.2.0...v0.3.0) (2026-11-21)
 
 
