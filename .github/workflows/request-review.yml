@@ -1,8 +1,9 @@
 name: Request Review
 
-# Requests a review from the repository owner on every non-draft pull request.
+# Assigns the repository owner to every pull request (drafts and the owner's own
+# included), and requests a review from the owner on every non-draft pull request.
 # GitHub does not allow requesting a review from a PR's author, so pull requests
-# the owner opened (including ones opened with OWNER_TOKEN) are skipped.
+# the owner opened (including ones opened with OWNER_TOKEN) get no review request.
 #
 # pull_request_target runs in the base branch and never checks out PR code, so
 # it is safe for pull requests from forks.
@@ -12,9 +13,20 @@ on:
     types: [opened, reopened, ready_for_review]
 
 permissions:
+  issues: write
   pull-requests: write
 
 jobs:
+  assign:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Assign the owner
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          ASSIGNEE: ${{ github.repository_owner }}
+        run: gh pr edit "$PR" --repo "$GITHUB_REPOSITORY" --add-assignee "$ASSIGNEE"
+
   request-review:
     if: ${{ !github.event.pull_request.draft && github.event.pull_request.user.login != github.repository_owner }}
     runs-on: ubuntu-latest
