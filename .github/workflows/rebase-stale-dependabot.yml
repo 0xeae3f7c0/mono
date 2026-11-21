@@ -1,0 +1,32 @@
+name: Rebase Stale Dependabot PRs
+
+# Hourly: asks Dependabot to rebase its failing pull requests that are behind
+# main, at most once per PR every 24 hours (see scripts/rebase-stale-dependabot.sh).
+# Needs OWNER_TOKEN: Dependabot ignores commands posted by bot accounts.
+
+on:
+  schedule:
+    - cron: "45 * * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Only report which PRs would get a rebase request
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rebase-stale-dependabot
+  cancel-in-progress: false
+
+jobs:
+  rebase:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: bash scripts/rebase-stale-dependabot.sh
+        env:
+          GH_TOKEN: ${{ secrets.OWNER_TOKEN }}
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
