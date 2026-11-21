@@ -1,0 +1,74 @@
+name: Lint
+
+# Runs the monorepo's lint and audit tools (each a Nix package in pkgs/) on
+# pull requests and on main. Report only: a tool that finds problems marks its
+# step as failed and writes the output to the job summary, but the job still
+# passes, so these findings never block auto-merge. Tighten a tool to blocking
+# by removing `continue-on-error` once the repository is clean for it.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lint-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  lint:
+    name: ${{ matrix.tool }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        tool:
+          - secret-scan
+          - spell-check
+          - markdown-lint
+          - yaml-format
+          - toml-lint
+          - shell-format
+          - go-lint
+          - govulncheck
+          - cargo-deny
+          - unused-deps
+          - kube-lint
+          - tf-lint
+          - commit-lint
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # secret-scan reads history; commit-lint compares against the base branch.
+          fetch-depth: 0
+      - uses: DeterminateSystems/nix-installer-action@v23
+      - name: Run ${{ matrix.tool }}
+        id: run
+        continue-on-error: true
+        env:
+          TOOL: ${{ matrix.tool }}
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          args=()
+          # Pull requests: only the PR's own commits. Pushes: the pushed commit.
+          if [[ $TOOL == commit-lint ]]; then args=("${BASE:-HEAD~1}..HEAD"); fi
+          set -o pipefail
+          nix run ".#$TOOL" -- "${args[@]}" 2>&1 | tee output.txt
+      - name: Summary
+        if: always()
+        env:
+          TOOL: ${{ matrix.tool }}
+          OUTCOME: ${{ steps.run.outcome }}
+        run: |
+          {
+            echo "### $TOOL: $OUTCOME"
+            if [[ $OUTCOME != success && -s output.txt ]]; then
+              echo '```'
+              tail -n 200 output.txt
+              echo '```'
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

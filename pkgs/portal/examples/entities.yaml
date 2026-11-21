@@ -133,6 +133,20 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
+  name: cargo-deny
+  description: "Checks every Cargo workspace in the monorepo for security advisories, banned or duplicate crates and untrusted sources with cargo-deny. Run `commit-cargo-deny` from the repository root."
+  annotations:
+    github.com/project-slug: 0xeae3f7c0/mono
+    backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/cargo-deny
+spec:
+  type: tool
+  lifecycle: production
+  owner: platform
+  system: commit
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
   name: changelog
   description: "changelog"
   annotations:
@@ -152,6 +166,20 @@ metadata:
   annotations:
     github.com/project-slug: 0xeae3f7c0/mono
     backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/ci-runner-image
+spec:
+  type: tool
+  lifecycle: production
+  owner: platform
+  system: commit
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: commit-lint
+  description: "Checks that commit messages follow Conventional Commits (the format release-please and the PR title check rely on) with committed. Run `commit-commit-lint [revision-range]` (defaults to origin/main..HEAD)."
+  annotations:
+    github.com/project-slug: 0xeae3f7c0/mono
+    backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/commit-lint
 spec:
   type: tool
   lifecycle: production
@@ -315,6 +343,20 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
+  name: govulncheck
+  description: "Reports known vulnerabilities that the monorepo's Go code actually calls, module by module, with govulncheck (Go's own call-graph-aware scanner). Run `commit-govulncheck` from the repository root."
+  annotations:
+    github.com/project-slug: 0xeae3f7c0/mono
+    backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/govulncheck
+spec:
+  type: tool
+  lifecycle: production
+  owner: platform
+  system: commit
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
   name: heatmap
   description: "Commit activity heatmap: commits per weekday and hour from git history"
   annotations:
@@ -376,6 +418,34 @@ metadata:
   annotations:
     github.com/project-slug: 0xeae3f7c0/mono
     backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/integration-test
+spec:
+  type: tool
+  lifecycle: production
+  owner: platform
+  system: commit
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: kube-lint
+  description: "Checks the Helm chart (deploy/helm/commit) against Kubernetes best practices (resource limits, probes, non-root containers) with KubeLinter. Run `commit-kube-lint [chart-dir]` from the repository root."
+  annotations:
+    github.com/project-slug: 0xeae3f7c0/mono
+    backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/kube-lint
+spec:
+  type: tool
+  lifecycle: production
+  owner: platform
+  system: commit
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: markdown-lint
+  description: "Lints the monorepo's Markdown (READMEs, docs, changelog) for broken structure and style with rumdl. Run `commit-markdown-lint [--fix]` from the repository root."
+  annotations:
+    github.com/project-slug: 0xeae3f7c0/mono
+    backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/markdown-lint
 spec:
   type: tool
   lifecycle: production
@@ -693,6 +763,20 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
+  name: tf-lint
+  description: "Lints the monorepo's OpenTofu / Terraform configurations (pkgs/repo-settings) for errors, deprecated syntax and unused declarations with TFLint. Run `commit-tf-lint` from the repository root."
+  annotations:
+    github.com/project-slug: 0xeae3f7c0/mono
+    backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/tf-lint
+spec:
+  type: tool
+  lifecycle: production
+  owner: platform
+  system: commit
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
   name: toml-lint
   description: "Checks and formats the monorepo's TOML files (Cargo.toml manifests, rust-toolchain.toml, tool configs) with Taplo. Run `commit-toml-lint [--fix]` from the repository root."
   annotations:
@@ -714,6 +798,20 @@ metadata:
     backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/tracing
 spec:
   type: service
+  lifecycle: production
+  owner: platform
+  system: commit
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: unused-deps
+  description: "Finds dependencies declared in Cargo.toml that the code never uses, across every Rust project in the monorepo, with cargo-machete. Run `commit-unused-deps [--fix]` from the repository root."
+  annotations:
+    github.com/project-slug: 0xeae3f7c0/mono
+    backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/unused-deps
+spec:
+  type: tool
   lifecycle: production
   owner: platform
   system: commit
@@ -798,6 +896,20 @@ metadata:
     backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/widget
 spec:
   type: library
+  lifecycle: production
+  owner: platform
+  system: commit
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: yaml-format
+  description: "Checks and formats the monorepo's YAML (workflows, Dependabot, Helm values, the portal catalog) with yamlfmt. Helm templates are skipped: they are Go templates, not plain YAML. Run `commit-yaml-format [--fix]` from the repository root."
+  annotations:
+    github.com/project-slug: 0xeae3f7c0/mono
+    backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/yaml-format
+spec:
+  type: tool
   lifecycle: production
   owner: platform
   system: commit

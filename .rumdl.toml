@@ -1,0 +1,5 @@
+# Markdown rules for `nix run .#markdown-lint` (rumdl).
+[global]
+# Long lines are fine in prose and tables; the docs wrap where it helps reading.
+disable = ["MD013"]
+exclude = ["**/node_modules/**", "**/CHANGELOG.md", "pkgs/reports/.output/**"]

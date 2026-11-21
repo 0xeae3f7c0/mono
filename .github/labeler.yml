@@ -26,6 +26,9 @@ app/archive-stats:
 app/badges:
   - changed-files:
       - any-glob-to-any-file: ["pkgs/badges/**"]
+app/cargo-deny:
+  - changed-files:
+      - any-glob-to-any-file: ["pkgs/cargo-deny/**"]
 app/changelog:
   - changed-files:
       - any-glob-to-any-file: ["pkgs/changelog/**"]
@@ -35,6 +38,9 @@ app/ci-runner-image:
 app/cli:
   - changed-files:
       - any-glob-to-any-file: ["crates/**"]
+app/commit-lint:
+  - changed-files:
+      - any-glob-to-any-file: ["pkgs/commit-lint/**"]
 app/crawl:
   - changed-files:
       - any-glob-to-any-file: ["pkgs/crawl/**"]
@@ -68,6 +74,9 @@ app/gitstat:
 app/go-lint:
   - changed-files:
       - any-glob-to-any-file: ["pkgs/go-lint/**"]
+app/govulncheck:
+  - changed-files:
+      - any-glob-to-any-file: ["pkgs/govulncheck/**"]
 app/heatmap:
   - changed-files:
       - any-glob-to-any-file: ["pkgs/heatmap/**"]
@@ -83,6 +92,12 @@ app/inspector:
 app/integration-test:
   - changed-files:
       - any-glob-to-any-file: ["pkgs/integration-test/**"]
+app/kube-lint:
+  - changed-files:
+      - any-glob-to-any-file: ["pkgs/kube-lint/**"]
+app/markdown-lint:
+  - changed-files:
+      - any-glob-to-any-file: ["pkgs/markdown-lint/**"]
 app/minify:
   - changed-files:
       - any-glob-to-any-file: ["pkgs/minify/**"]
@@ -152,12 +167,18 @@ app/status-worker:
 app/summarize:
   - changed-files:
       - any-glob-to-any-file: ["pkgs/summarize/**"]
+app/tf-lint:
+  - changed-files:
+      - any-glob-to-any-file: ["pkgs/tf-lint/**"]
 app/toml-lint:
   - changed-files:
       - any-glob-to-any-file: ["pkgs/toml-lint/**"]
 app/tracing:
   - changed-files:
       - any-glob-to-any-file: ["pkgs/tracing/**"]
+app/unused-deps:
+  - changed-files:
+      - any-glob-to-any-file: ["pkgs/unused-deps/**"]
 app/visualizer:
   - changed-files:
       - any-glob-to-any-file: ["pkgs/visualizer/**"]
@@ -176,6 +197,9 @@ app/weekly-page:
 app/widget:
   - changed-files:
       - any-glob-to-any-file: ["pkgs/widget/**"]
+app/yaml-format:
+  - changed-files:
+      - any-glob-to-any-file: ["pkgs/yaml-format/**"]
 area/ci:
   - changed-files:
       - any-glob-to-any-file: [".github/**"]
@@ -196,10 +220,13 @@ lang/js:
       - any-glob-to-any-file: ["web/**", "pkgs/admin/**", "pkgs/admin-api/**", "pkgs/changelog/**", "pkgs/dashboard/**", "pkgs/docs/**", "pkgs/edge-cache/**", "pkgs/mobile/**", "pkgs/portal/**", "pkgs/reports/**", "pkgs/status-page/**", "pkgs/website/**", "pkgs/widget/**"]
 lang/nix:
   - changed-files:
-      - any-glob-to-any-file: ["flake.nix", "nix/**", "pkgs/actions-lint/**", "pkgs/ci-runner-image/**", "pkgs/devcontainer/**", "pkgs/go-lint/**", "pkgs/helm-check/**", "pkgs/integration-test/**", "pkgs/nixos-module/**", "pkgs/repo-tools/**", "pkgs/sbom/**", "pkgs/secret-scan/**", "pkgs/shell-format/**", "pkgs/spell-check/**", "pkgs/toml-lint/**", "pkgs/vuln-scan/**"]
+      - any-glob-to-any-file: ["flake.nix", "nix/**", "pkgs/actions-lint/**", "pkgs/cargo-deny/**", "pkgs/ci-runner-image/**", "pkgs/commit-lint/**", "pkgs/devcontainer/**", "pkgs/go-lint/**", "pkgs/govulncheck/**", "pkgs/helm-check/**", "pkgs/integration-test/**", "pkgs/kube-lint/**", "pkgs/markdown-lint/**", "pkgs/nixos-module/**", "pkgs/repo-tools/**", "pkgs/sbom/**", "pkgs/secret-scan/**", "pkgs/shell-format/**", "pkgs/spell-check/**", "pkgs/tf-lint/**", "pkgs/toml-lint/**", "pkgs/unused-deps/**", "pkgs/vuln-scan/**", "pkgs/yaml-format/**"]
 lang/python:
   - changed-files:
       - any-glob-to-any-file: ["pkgs/heatmap/**"]
 lang/rust:
   - changed-files:
       - any-glob-to-any-file: ["crates/**", "pkgs/activity-rpc/**", "pkgs/alerts-ui/**", "pkgs/archive/**", "pkgs/badges/**", "pkgs/crawl/**", "pkgs/desktop/**", "pkgs/events-api/**", "pkgs/forecast/**", "pkgs/gitstat/**", "pkgs/inspector/**", "pkgs/minify/**", "pkgs/plugin-host/**", "pkgs/repo-registry/**", "pkgs/reports-pdf/**", "pkgs/runner-monitor/**", "pkgs/search/**", "pkgs/shortlinks/**", "pkgs/sql/**", "pkgs/summarize/**", "pkgs/visualizer/**", "pkgs/weekly-page/**"]
+lang/terraform:
+  - changed-files:
+      - any-glob-to-any-file: []

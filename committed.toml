@@ -1,0 +1,8 @@
+# Commit message rules for `nix run .#commit-lint` (committed): Conventional
+# Commits, as release-please and .github/workflows/pr-title.yml expect.
+style = "conventional"
+subject_capitalized = false
+subject_length = 72
+line_length = 100
+merge_commit = false
+allowed_types = ["feat", "fix", "perf", "refactor", "docs", "build", "ci", "chore", "test", "style", "revert"]
