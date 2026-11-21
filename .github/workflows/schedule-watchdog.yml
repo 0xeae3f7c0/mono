@@ -1,0 +1,47 @@
+name: Schedule Watchdog
+
+# GitHub runs scheduled workflows on a best-effort basis and silently drops
+# runs when it is busy. Every hour this checks each 4-hourly workflow and
+# dispatches it if its last run (of any trigger) started 4 or more hours ago.
+# workflow_dispatch is one of the events GITHUB_TOKEN is allowed to trigger.
+
+on:
+  schedule:
+    - cron: "5 * * * *"
+  workflow_dispatch:
+
+permissions:
+  actions: write
+
+concurrency:
+  group: schedule-watchdog
+  cancel-in-progress: false
+
+jobs:
+  watchdog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch overdue workflows
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MAX_AGE_HOURS: 4
+          REF: ${{ github.event.repository.default_branch }}
+          WORKFLOWS: >-
+            maintenance.yml
+            deps-merge.yml
+            dependabot-alerts.yml
+            activity-report.yml
+            stale-run-sweeper.yml
+        run: |
+          now=$(date -u +%s)
+          for wf in $WORKFLOWS; do
+            last=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow "$wf" --limit 1 \
+              --json createdAt --jq '.[0].createdAt // empty')
+            age=$(( (now - $(date -u -d "${last:-1970-01-01T00:00:00Z}" +%s)) / 3600 ))
+            if (( age >= MAX_AGE_HOURS )); then
+              echo "$wf: last run ${age}h ago, dispatching"
+              gh workflow run "$wf" --repo "$GITHUB_REPOSITORY" --ref "$REF"
+            else
+              echo "$wf: last run ${age}h ago, on schedule"
+            fi
+          done
