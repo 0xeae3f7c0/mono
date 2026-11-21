@@ -46,7 +46,7 @@ let
     events-api = "3000";
     badges = "8081";
   };
-  images = lib.optionalAttrs pkgs.stdenv.isLinux (
+  images = lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux (
     lib.mapAttrs' (
       name: port:
       lib.nameValuePair "${name}-image" (

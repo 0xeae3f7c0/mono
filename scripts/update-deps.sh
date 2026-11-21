@@ -157,6 +157,22 @@ if [[ -f flake.nix ]] && command -v nix >/dev/null; then
   fi
 fi
 
+# Nix packages in pkgs/ that build a pinned upstream release (a `version` plus
+# a source hash in default.nix): nix-update bumps version and hashes, one PR each.
+if command -v nix >/dev/null; then
+  for file in $(git ls-files -- 'pkgs/*/default.nix'); do
+    grep -qE '^\s*version = "' "$file" || continue
+    name=$(basename "$(dirname "$file")")
+    old=$(sed -nE 's/^\s*version = "([^"]+)";/\1/p' "$file" | head -1)
+    sync_base
+    nix run nixpkgs#nix-update -- -f nix/update.nix "$name" >/dev/null 2>&1 || continue
+    new=$(sed -nE 's/^\s*version = "([^"]+)";/\1/p' "$file" | head -1)
+    git checkout -- "pkgs/$name"
+    [[ -n "$new" && "$new" != "$old" ]] || continue
+    propose "pkgs/$name" nix-update "$name" "v$old" "v$new" nix sh -c "cd ../.. && nix run nixpkgs#nix-update -- -f nix/update.nix $name --version $new"
+  done
+fi
+
 # Backstage apps (Yarn workspaces) upgrade as a set: bump to the latest release.
 for dir in $(projects backstage.json); do
   old=$(jq -r .version "$dir/backstage.json")

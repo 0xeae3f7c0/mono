@@ -149,6 +149,9 @@ lang/go:
 lang/js:
   - changed-files:
       - any-glob-to-any-file: ["web/**", "pkgs/admin/**", "pkgs/admin-api/**", "pkgs/changelog/**", "pkgs/dashboard/**", "pkgs/docs/**", "pkgs/edge-cache/**", "pkgs/mobile/**", "pkgs/portal/**", "pkgs/reports/**", "pkgs/status-page/**", "pkgs/website/**", "pkgs/widget/**"]
+lang/nix:
+  - changed-files:
+      - any-glob-to-any-file: ["flake.nix", "nix/**"]
 lang/rust:
   - changed-files:
       - any-glob-to-any-file: ["crates/**", "pkgs/activity-rpc/**", "pkgs/alerts-ui/**", "pkgs/archive/**", "pkgs/badges/**", "pkgs/crawl/**", "pkgs/desktop/**", "pkgs/events-api/**", "pkgs/forecast/**", "pkgs/gitstat/**", "pkgs/inspector/**", "pkgs/minify/**", "pkgs/plugin-host/**", "pkgs/repo-registry/**", "pkgs/reports-pdf/**", "pkgs/runner-monitor/**", "pkgs/search/**", "pkgs/shortlinks/**", "pkgs/sql/**", "pkgs/summarize/**", "pkgs/visualizer/**", "pkgs/weekly-page/**"]

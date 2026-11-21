@@ -30,13 +30,24 @@
         };
         devPackages = import ./nix/packages.nix { inherit pkgs; };
         rust = import ./nix/rust.nix { inherit pkgs crane; };
+        # Nix projects in pkgs/ (one directory per package, see nix/pkgs.nix).
+        nixProjects = import ./nix/pkgs.nix {
+          inherit pkgs;
+          extra = {
+            commitPackages = rust.packages;
+            devTools = devPackages.tools;
+          };
+        };
       in
       {
-        # `nix build .#<name>`: the CLI, the Rust services, and (on Linux) their
-        # container images, e.g. `nix build .#events-api-image`.
-        packages = rust.packages // {
-          default = rust.packages.commit;
-        };
+        # `nix build .#<name>`: the CLI, the Rust services, (on Linux) their
+        # container images, and every Nix project in pkgs/.
+        packages =
+          rust.packages
+          // nixProjects
+          // {
+            default = rust.packages.commit;
+          };
 
         # `nix develop` (or direnv with .envrc): every toolchain the monorepo uses.
         devShells.default = pkgs.mkShell {

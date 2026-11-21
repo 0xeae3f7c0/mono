@@ -25,7 +25,7 @@
 
   # System libraries some projects link against on Linux:
   # visualizer (bevy) and desktop (Tauri).
-  nativeLibs = pkgs.lib.optionals pkgs.stdenv.isLinux (
+  nativeLibs = pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux (
     with pkgs;
     [
       alsa-lib
