@@ -315,6 +315,20 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
+  name: integration-test
+  description: "End-to-end test: boots a NixOS VM with the nixos-module services, records an event through events-api, reads it back, and fetches a badge from badges. Build it with `nix build .#integration-test` (Linux with KVM)."
+  annotations:
+    github.com/project-slug: 0xeae3f7c0/mono
+    backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/integration-test
+spec:
+  type: tool
+  lifecycle: production
+  owner: platform
+  system: commit
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
   name: minify
   description: "Minifies the embeddable `widget` script with SWC before it is published, keeping the snippet sites paste into their pages small."
   annotations:

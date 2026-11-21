@@ -77,7 +77,16 @@ function steps(name, dir) {
     const check = existsSync(join(dir, "default.nix"))
       ? `nix build "../..#${name}" --print-build-logs`
       : `nix eval "../..#nixosModules.default" --apply builtins.isFunction`;
-    return ["      - uses: DeterminateSystems/nix-installer-action@v20", `      - run: ${check}`];
+    // NixOS VM tests need /dev/kvm, which hosted runners have but lock down.
+    const vmTest =
+      existsSync(join(dir, "default.nix")) && /runNixOSTest/.test(readFileSync(join(dir, "default.nix"), "utf8"));
+    const kvm = [
+      "      - name: Enable KVM",
+      "        run: |",
+      `          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules`,
+      "          sudo udevadm control --reload-rules && sudo udevadm trigger --name-match=kvm",
+    ];
+    return [...(vmTest ? kvm : []), "      - uses: DeterminateSystems/nix-installer-action@v20", `      - run: ${check}`];
   }
   return null;
 }
