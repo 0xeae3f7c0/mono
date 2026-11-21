@@ -147,6 +147,20 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
+  name: ci-runner-image
+  description: "Self-hosted GitHub Actions runner image with every monorepo toolchain, so CI jobs skip per-job installs. The entrypoint registers an ephemeral runner (one job, then exit) from RUNNER_URL and RUNNER_TOKEN; see README.md. Built with `nix build .#ci-runner-image` (a docker-archive tarball)."
+  annotations:
+    github.com/project-slug: 0xeae3f7c0/mono
+    backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/ci-runner-image
+spec:
+  type: tool
+  lifecycle: production
+  owner: platform
+  system: commit
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
   name: crawl
   description: "Collects release-note and changelog links from a dependency's web page, so dependency PRs can link to what changed. Lists links as absolute URLs."
   annotations:

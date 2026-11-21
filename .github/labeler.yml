@@ -29,6 +29,9 @@ app/badges:
 app/changelog:
   - changed-files:
       - any-glob-to-any-file: ["pkgs/changelog/**"]
+app/ci-runner-image:
+  - changed-files:
+      - any-glob-to-any-file: ["pkgs/ci-runner-image/**"]
 app/cli:
   - changed-files:
       - any-glob-to-any-file: ["crates/**"]
@@ -175,7 +178,7 @@ lang/js:
       - any-glob-to-any-file: ["web/**", "pkgs/admin/**", "pkgs/admin-api/**", "pkgs/changelog/**", "pkgs/dashboard/**", "pkgs/docs/**", "pkgs/edge-cache/**", "pkgs/mobile/**", "pkgs/portal/**", "pkgs/reports/**", "pkgs/status-page/**", "pkgs/website/**", "pkgs/widget/**"]
 lang/nix:
   - changed-files:
-      - any-glob-to-any-file: ["flake.nix", "nix/**", "pkgs/actions-lint/**", "pkgs/devcontainer/**", "pkgs/helm-check/**", "pkgs/integration-test/**", "pkgs/nixos-module/**", "pkgs/repo-tools/**", "pkgs/sbom/**", "pkgs/vuln-scan/**"]
+      - any-glob-to-any-file: ["flake.nix", "nix/**", "pkgs/actions-lint/**", "pkgs/ci-runner-image/**", "pkgs/devcontainer/**", "pkgs/helm-check/**", "pkgs/integration-test/**", "pkgs/nixos-module/**", "pkgs/repo-tools/**", "pkgs/sbom/**", "pkgs/vuln-scan/**"]
 lang/rust:
   - changed-files:
       - any-glob-to-any-file: ["crates/**", "pkgs/activity-rpc/**", "pkgs/alerts-ui/**", "pkgs/archive/**", "pkgs/badges/**", "pkgs/crawl/**", "pkgs/desktop/**", "pkgs/events-api/**", "pkgs/forecast/**", "pkgs/gitstat/**", "pkgs/inspector/**", "pkgs/minify/**", "pkgs/plugin-host/**", "pkgs/repo-registry/**", "pkgs/reports-pdf/**", "pkgs/runner-monitor/**", "pkgs/search/**", "pkgs/shortlinks/**", "pkgs/sql/**", "pkgs/summarize/**", "pkgs/visualizer/**", "pkgs/weekly-page/**"]
