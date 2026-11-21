@@ -1,6 +1,13 @@
 # repository automation (.github/)
 # Cargo, Go and npm version updates come from scripts/update-deps.sh (maintenance.yml),
 # one PR per package; Dependabot security alerts still cover them.
+#
+# Dependabot itself handles:
+#   - version updates for GitHub Actions, Docker base images and the dev container;
+#   - security updates only (open-pull-requests-limit: 0 turns version updates off)
+#     for Cargo, Go and npm, so a vulnerable package gets a fix PR even between
+#     maintenance runs. Needs "Dependabot security updates" on in Settings.
+# Directory globs pick up new projects in pkgs/ without editing this file.
 version: 2
 updates:
   - package-ecosystem: github-actions
@@ -11,3 +18,47 @@ updates:
     labels: [kind/deps, area/ci, source/dependabot]
     commit-message:
       prefix: "ci(deps)"
+
+  - package-ecosystem: docker
+    directories: ["/pkgs/*/packages/*", "/pkgs/*"]
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 5
+    labels: [kind/deps, area/infra, source/dependabot]
+    commit-message:
+      prefix: "build(deps)"
+
+  - package-ecosystem: devcontainers
+    directory: /
+    schedule:
+      interval: weekly
+    labels: [kind/deps, area/infra, source/dependabot]
+    commit-message:
+      prefix: "build(deps)"
+
+  - package-ecosystem: cargo
+    directories: ["/", "/pkgs/*"]
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 0
+    labels: [kind/deps, kind/security, lang/rust, source/dependabot]
+    commit-message:
+      prefix: "fix(deps)"
+
+  - package-ecosystem: gomod
+    directories: ["/go", "/pkgs/*"]
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 0
+    labels: [kind/deps, kind/security, lang/go, source/dependabot]
+    commit-message:
+      prefix: "fix(deps)"
+
+  - package-ecosystem: npm
+    directories: ["/pkgs/*", "/web/*"]
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 0
+    labels: [kind/deps, kind/security, lang/js, source/dependabot]
+    commit-message:
+      prefix: "fix(deps)"
