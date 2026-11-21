@@ -189,6 +189,20 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
+  name: devcontainer
+  description: "Development container image for Codespaces and VS Code dev containers, with every toolchain from the dev shell (Rust, Go, Node.js, just, lefthook, ...). Includes the glibc loader path and C++ runtime that the VS Code server needs. Built with `nix build .#devcontainer` (a docker-archive tarball)."
+  annotations:
+    github.com/project-slug: 0xeae3f7c0/mono
+    backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/devcontainer
+spec:
+  type: tool
+  lifecycle: production
+  owner: platform
+  system: commit
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
   name: docs
   description: "commit platform documentation site (Docusaurus)"
   annotations:
