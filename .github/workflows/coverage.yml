@@ -1,0 +1,63 @@
+name: Coverage
+
+# Test coverage for the root Rust workspace (cargo-llvm-cov) and every Go module,
+# uploaded to Codecov with one flag per area. Codecov comments the coverage
+# change on pull requests. Public repositories upload without a token; set the
+# CODECOV_TOKEN secret to avoid rate limits.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: coverage-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  rust:
+    name: Rust (crates/)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: llvm-tools-preview
+      - uses: Swatinem/rust-cache@v2
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-llvm-cov
+      - run: cargo llvm-cov --workspace --locked --lcov --output-path lcov.info
+      - uses: codecov/codecov-action@v7
+        with:
+          files: lcov.info
+          flags: rust
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+  go:
+    name: Go modules
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version: stable
+          cache: false
+      - name: Test with coverage
+        run: |
+          mkdir -p coverage
+          for mod in $(git ls-files -- '*go.mod'); do
+            dir=$(dirname "$mod")
+            name=$(echo "$dir" | tr '/' '-')
+            (cd "$dir" && go test -coverprofile="$GITHUB_WORKSPACE/coverage/$name.out" ./...)
+          done
+      - uses: codecov/codecov-action@v7
+        with:
+          directory: coverage
+          flags: go
+          token: ${{ secrets.CODECOV_TOKEN }}
