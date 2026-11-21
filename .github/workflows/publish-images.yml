@@ -1,0 +1,57 @@
+name: Publish Images
+
+# Builds the Nix container images and pushes them to GitHub Container Registry
+# as ghcr.io/<owner>/<repo>/<image>:latest and :<commit sha>. The Helm chart
+# (deploy/helm/commit) and .devcontainer/devcontainer.json pull these.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "pkgs/devcontainer/**"
+      - "pkgs/ci-runner-image/**"
+      - "pkgs/events-api/**"
+      - "pkgs/badges/**"
+      - "nix/**"
+      - "flake.nix"
+      - "flake.lock"
+      - "rust-toolchain.toml"
+      - ".github/workflows/publish-images.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: publish-images
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: ${{ matrix.image }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { package: devcontainer, image: devcontainer }
+          - { package: ci-runner-image, image: ci-runner }
+          - { package: events-api-image, image: events-api }
+          - { package: badges-image, image: badges }
+    steps:
+      - uses: actions/checkout@v7
+      - uses: DeterminateSystems/nix-installer-action@v20
+      - run: nix build ".#${{ matrix.package }}" --print-build-logs
+      - name: Push to GHCR
+        env:
+          GH_ACTOR: ${{ github.actor }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          IMAGE: ${{ matrix.image }}
+        run: |
+          repo="ghcr.io/${GITHUB_REPOSITORY,,}/$IMAGE"
+          for tag in latest "$GITHUB_SHA"; do
+            nix run nixpkgs#skopeo -- copy --dest-creds "$GH_ACTOR:$GH_TOKEN" \
+              docker-archive:result "docker://$repo:$tag"
+          done
+          echo "Pushed $repo:latest and :$GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"
