@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.4.0](https://github.com/0xeae3f7c0/mono/compare/v0.3.2...v0.4.0) (2026-11-21)
+
+
+### Features
+
+* **pkgs:** add secret-scan and spell-check ([00b95c9](https://github.com/0xeae3f7c0/mono/commit/00b95c9073540b7e9bff2b98bc0c9d26fed97834))
+
+
+### Build
+
+* **nix:** add treefmt, git-hooks, advisory-db ([56253d8](https://github.com/0xeae3f7c0/mono/commit/56253d86ddca4263864a5ddc76eb99b3ed3c248c))
+
 ## [0.3.2](https://github.com/0xeae3f7c0/mono/compare/v0.3.1...v0.3.2) (2026-11-21)
 
 
