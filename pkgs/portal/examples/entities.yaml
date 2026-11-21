@@ -455,6 +455,20 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
+  name: sbom
+  description: "Writes a CycloneDX software bill of materials for the root workspace and every project in pkgs/ with Syft: one sbom/<name>.cdx.json per project. Run `commit-sbom [output-dir]` from the repository root."
+  annotations:
+    github.com/project-slug: 0xeae3f7c0/mono
+    backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/sbom
+spec:
+  type: tool
+  lifecycle: production
+  owner: platform
+  system: commit
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
   name: search
   description: "Full-text search over Markdown files with tantivy."
   annotations:
