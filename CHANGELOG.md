@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.2](https://github.com/0xeae3f7c0/mono/compare/v0.3.1...v0.3.2) (2026-11-21)
+
+
+### Bug Fixes
+
+* **ci:** retry unknown PR mergeability ([44df513](https://github.com/0xeae3f7c0/mono/commit/44df513fe01ba20bf72a98d54ba037465e19a99c))
+* **deps:** bump jsdom from 27.4.0 to 31.0.1 in /pkgs/portal ([#206](https://github.com/0xeae3f7c0/mono/issues/206)) ([74bab39](https://github.com/0xeae3f7c0/mono/commit/74bab39a8e87e1817e8c9a1de398d363957af43f))
+
 ## [0.3.1](https://github.com/0xeae3f7c0/mono/compare/v0.3.0...v0.3.1) (2026-11-21)
 
 
