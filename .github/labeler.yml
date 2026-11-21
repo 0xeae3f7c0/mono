@@ -65,6 +65,9 @@ app/forecast:
 app/gitstat:
   - changed-files:
       - any-glob-to-any-file: ["pkgs/gitstat/**"]
+app/go-lint:
+  - changed-files:
+      - any-glob-to-any-file: ["pkgs/go-lint/**"]
 app/helm-check:
   - changed-files:
       - any-glob-to-any-file: ["pkgs/helm-check/**"]
@@ -125,6 +128,9 @@ app/secret-scan:
 app/services:
   - changed-files:
       - any-glob-to-any-file: ["pkgs/services/**"]
+app/shell-format:
+  - changed-files:
+      - any-glob-to-any-file: ["pkgs/shell-format/**"]
 app/shortlinks:
   - changed-files:
       - any-glob-to-any-file: ["pkgs/shortlinks/**"]
@@ -143,6 +149,9 @@ app/status-worker:
 app/summarize:
   - changed-files:
       - any-glob-to-any-file: ["pkgs/summarize/**"]
+app/toml-lint:
+  - changed-files:
+      - any-glob-to-any-file: ["pkgs/toml-lint/**"]
 app/tracing:
   - changed-files:
       - any-glob-to-any-file: ["pkgs/tracing/**"]
@@ -184,7 +193,10 @@ lang/js:
       - any-glob-to-any-file: ["web/**", "pkgs/admin/**", "pkgs/admin-api/**", "pkgs/changelog/**", "pkgs/dashboard/**", "pkgs/docs/**", "pkgs/edge-cache/**", "pkgs/mobile/**", "pkgs/portal/**", "pkgs/reports/**", "pkgs/status-page/**", "pkgs/website/**", "pkgs/widget/**"]
 lang/nix:
   - changed-files:
-      - any-glob-to-any-file: ["flake.nix", "nix/**", "pkgs/actions-lint/**", "pkgs/ci-runner-image/**", "pkgs/devcontainer/**", "pkgs/helm-check/**", "pkgs/integration-test/**", "pkgs/nixos-module/**", "pkgs/repo-tools/**", "pkgs/sbom/**", "pkgs/secret-scan/**", "pkgs/spell-check/**", "pkgs/vuln-scan/**"]
+      - any-glob-to-any-file: ["flake.nix", "nix/**", "pkgs/actions-lint/**", "pkgs/ci-runner-image/**", "pkgs/devcontainer/**", "pkgs/go-lint/**", "pkgs/helm-check/**", "pkgs/integration-test/**", "pkgs/nixos-module/**", "pkgs/repo-tools/**", "pkgs/sbom/**", "pkgs/secret-scan/**", "pkgs/shell-format/**", "pkgs/spell-check/**", "pkgs/toml-lint/**", "pkgs/vuln-scan/**"]
+lang/python:
+  - changed-files:
+      - any-glob-to-any-file: []
 lang/rust:
   - changed-files:
       - any-glob-to-any-file: ["crates/**", "pkgs/activity-rpc/**", "pkgs/alerts-ui/**", "pkgs/archive/**", "pkgs/badges/**", "pkgs/crawl/**", "pkgs/desktop/**", "pkgs/events-api/**", "pkgs/forecast/**", "pkgs/gitstat/**", "pkgs/inspector/**", "pkgs/minify/**", "pkgs/plugin-host/**", "pkgs/repo-registry/**", "pkgs/reports-pdf/**", "pkgs/runner-monitor/**", "pkgs/search/**", "pkgs/shortlinks/**", "pkgs/sql/**", "pkgs/summarize/**", "pkgs/visualizer/**", "pkgs/weekly-page/**"]

@@ -301,6 +301,20 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
+  name: go-lint
+  description: "Lints every Go module in the monorepo (go/ and pkgs/*) with golangci-lint. Run `commit-go-lint` from the repository root."
+  annotations:
+    github.com/project-slug: 0xeae3f7c0/mono
+    backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/go-lint
+spec:
+  type: tool
+  lifecycle: production
+  owner: platform
+  system: commit
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
   name: helm-check
   description: "Validates the deploy chart (deploy/helm/commit): `helm lint`, then renders it and checks every manifest against the Kubernetes schemas with kubeconform. Run `commit-helm-check [chart-dir]` from the repository root."
   annotations:
@@ -581,6 +595,20 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
+  name: shell-format
+  description: "Checks and formats the monorepo's shell scripts (scripts/*.sh and the root shortcuts) with shfmt. Run `commit-shell-format [--fix]` from the repository root."
+  annotations:
+    github.com/project-slug: 0xeae3f7c0/mono
+    backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/shell-format
+spec:
+  type: tool
+  lifecycle: production
+  owner: platform
+  system: commit
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
   name: shortlinks
   description: "Short links for shared reports and dashboards (e.g. links posted in chat by `pipelines`). Stores links in memory; Rocket web service."
   annotations:
@@ -642,6 +670,20 @@ metadata:
   annotations:
     github.com/project-slug: 0xeae3f7c0/mono
     backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/summarize
+spec:
+  type: tool
+  lifecycle: production
+  owner: platform
+  system: commit
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: toml-lint
+  description: "Checks and formats the monorepo's TOML files (Cargo.toml manifests, rust-toolchain.toml, tool configs) with Taplo. Run `commit-toml-lint [--fix]` from the repository root."
+  annotations:
+    github.com/project-slug: 0xeae3f7c0/mono
+    backstage.io/source-location: url:https://github.com/0xeae3f7c0/mono/tree/main/pkgs/toml-lint
 spec:
   type: tool
   lifecycle: production
