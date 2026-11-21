@@ -1,0 +1,31 @@
+name: Nix
+
+# Checks that the development shell in flake.nix evaluates and builds.
+
+on:
+  push:
+    branches: [main]
+    paths: ["flake.nix", "flake.lock", "shell.nix", "nix/**", ".github/workflows/nix.yml"]
+  pull_request:
+    paths: ["flake.nix", "flake.lock", "shell.nix", "nix/**", ".github/workflows/nix.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nix-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  flake:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: DeterminateSystems/nix-installer-action@v20
+      - name: Evaluate and build the dev shell
+        run: |
+          nix flake check --all-systems --no-build
+          nix develop --command bash -c 'cargo --version && go version && node --version && just --version'
+      - name: Formatting
+        run: nix fmt -- --check flake.nix shell.nix nix/packages.nix
