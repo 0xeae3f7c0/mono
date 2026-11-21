@@ -61,6 +61,11 @@ updates:
     schedule:
       interval: daily
     labels: [kind/deps, lang/js, source/dependabot]
+    # Yarn projects set npmMinimalAgeGate: 3d (pkgs/portal/.yarnrc.yml) and
+    # reject newer releases as "quarantined" (YN0016); wait as long before
+    # proposing a version so its PR can install.
+    cooldown:
+      default-days: 3
     # Dependabot ignores peer dependencies: TypeScript majors break frameworks
     # that pin it (Angular 22 in pkgs/admin needs typescript >=6.0 <6.1).
     # scripts/update-deps.sh still offers them and skips peer conflicts.
