@@ -1,8 +1,8 @@
 name: Code Scanning Alerts to Issues
 
-# Every 4 hours: one issue per code scanning rule with open alerts (CodeQL, Scorecard, ...),
+# Every 4 hours: one issue per open code scanning alert (CodeQL, Scorecard, ...),
 # labelled kind/security, source/code-scanning, app/<project> and a priority from
-# the highest alert severity; issues close when no alerts for the rule are open.
+# its severity; issues close when their alert is fixed or dismissed.
 # GITHUB_TOKEN can read code scanning alerts with security-events: read.
 
 on:
