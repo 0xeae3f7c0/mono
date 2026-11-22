@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.7](https://github.com/0xeae3f7c0/mono/compare/v0.6.6...v0.6.7) (2026-11-22)
+
+
+### Bug Fixes
+
+* **deps:** replace dependency @tsconfig/node24 with @tsconfig/node26 ([#240](https://github.com/0xeae3f7c0/mono/issues/240)) ([78f7239](https://github.com/0xeae3f7c0/mono/commit/78f7239f483617da2140d18ead99aaa4026b6653))
+
 ## [0.6.6](https://github.com/0xeae3f7c0/mono/compare/v0.6.5...v0.6.6) (2026-11-22)
 
 
