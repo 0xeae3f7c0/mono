@@ -6,8 +6,11 @@ name: Schedule Watchdog
 # workflow_dispatch is one of the events GITHUB_TOKEN is allowed to trigger.
 
 on:
+  # Hourly runs are best effort on GitHub; every push to main also starts one.
   schedule:
     - cron: "5 * * * *"
+  push:
+    branches: [main]
   workflow_dispatch:
 
 permissions:

@@ -14,8 +14,11 @@ name: Auto Merge
 on:
   pull_request:
     types: [opened, reopened, ready_for_review, synchronize]
+  # Hourly runs are best effort on GitHub; every push to main also starts one.
   schedule:
     - cron: "30 * * * *"
+  push:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -53,6 +56,9 @@ jobs:
       contents: write
       pull-requests: write
     if: ${{ github.event_name != 'pull_request' }}
+    concurrency:
+      group: auto-merge-sweep
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     steps:
       - name: Enable auto-merge where it is missing
