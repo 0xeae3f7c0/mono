@@ -1,0 +1,49 @@
+name: Workflow Health
+
+# Lints every workflow with actionlint and checks the latest run on main of
+# each workflow. Opens one issue per lint finding and one per failing
+# workflow (labelled kind/ci, area/ci, source/workflow-health), and closes
+# each issue once the finding is gone or a later run on main succeeds.
+# See scripts/workflow-health.mjs.
+
+on:
+  # Hourly runs are best effort on GitHub; every push to main also starts one.
+  schedule:
+    - cron: "40 * * * *"
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Only report what would change
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: workflow-health
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    permissions:
+      contents: read
+      actions: read
+      issues: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+      - name: Run actionlint
+        # Exit code 1 only means findings; they become issues in the next step.
+        run: |
+          go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.12
+          "$(go env GOPATH)/bin/actionlint" -format '{{json .}}' > "$RUNNER_TEMP/lint.json" || [ $? -eq 1 ]
+      - run: node scripts/workflow-health.mjs --lint "$RUNNER_TEMP/lint.json"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}

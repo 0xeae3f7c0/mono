@@ -112,6 +112,7 @@ Times are UTC. Workflows with a schedule can also be started from the Actions ta
 | Dependabot | daily | GitHub Actions versions; patch and minor updates squash-merge automatically. |
 | Dependabot Alerts to Issues | every 4 hours | One issue per open security alert (`kind/security`, `app/<project>`, priority by severity); closes when the alert is fixed or dismissed. |
 | Code Scanning Alerts to Issues | every 4 hours | One issue per code scanning rule with open alerts, listing each location (CodeQL, Scorecard; `kind/security`, `source/code-scanning`, `app/<project>`, priority by severity); closes when none are left. |
+| Workflow Health | hourly, every push to main | actionlint on all workflows plus the latest run on main of each workflow; one issue per lint finding or failing workflow (`kind/ci`, `source/workflow-health`); closes when the finding is gone or a later run succeeds. |
 
 ### Housekeeping
 
@@ -119,7 +120,6 @@ Times are UTC. Workflows with a schedule can also be started from the Actions ta
 |---|---|---|
 | Nightly | daily 01:07 | Release-mode tests on Linux, macOS and Windows, docs, Go and web |
 | Activity Report | every 4 hours | Commits per author for the period, in the run summary |
-| Stale | daily 03:41 | Marks and later closes inactive issues and pull requests |
 | Stale Run Sweeper | every 4 hours | Cancels queued runs for outdated commits |
 | Branch Cleanup | Sundays 04:11 | Deletes branches of closed automation pull requests |
 | Labels | on change, Mondays | Syncs `<group>/<name>` labels from `scripts/labels.mjs` |

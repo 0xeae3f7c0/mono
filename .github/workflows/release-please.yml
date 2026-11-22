@@ -4,18 +4,22 @@ name: Release Please
 # and a changelog generated from Conventional Commits. Merging it tags vX.Y.Z,
 # which triggers release.yml to build and attach the CLI binaries.
 #
+# Runs once a day, so a day's merged changes ship as one release instead of
+# one release per dependency update. Pushes to main only run it for the merged
+# release PR itself, which tags the release right away.
+#
 # Uses OWNER_TOKEN so the tag push triggers release.yml (pushes made with the
 # default GITHUB_TOKEN do not start other workflows).
 
 on:
   push:
     branches: [main]
+  schedule:
+    - cron: "0 6 * * *"
   workflow_dispatch:
 
 permissions:
-  contents: write
-  pull-requests: write
-  issues: write
+  contents: read
 
 concurrency:
   group: release-please
@@ -23,9 +27,14 @@ concurrency:
 
 jobs:
   release-please:
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    if: ${{ github.event_name != 'push' || startsWith(github.event.head_commit.message, 'chore(release):') }}
     runs-on: ubuntu-latest
     steps:
-      - uses: googleapis/release-please-action@v5
+      - uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
         id: release
         with:
           token: ${{ secrets.OWNER_TOKEN }}
@@ -38,12 +47,12 @@ jobs:
       # only the workspace's own entries on the release branch.
       - name: Check out the release PR branch
         if: ${{ steps.release.outputs.pr }}
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ fromJSON(steps.release.outputs.pr).headBranchName }}
           token: ${{ secrets.OWNER_TOKEN }}
       - if: ${{ steps.release.outputs.pr }}
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@39008827e6b4319a349e9a42dfc90579dd25f1ca # stable
       - name: Sync Cargo.lock
         if: ${{ steps.release.outputs.pr }}
         run: |

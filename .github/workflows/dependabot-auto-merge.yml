@@ -7,23 +7,34 @@ name: Auto Merge
 #
 # Auto-merge only waits for checks that branch protection marks as required;
 # without required checks GitHub merges right away.
+#
+# The hourly sweep enables auto-merge on open pull requests that missed it,
+# for example ones opened before the main ruleset existed.
 
 on:
   pull_request:
     types: [opened, reopened, ready_for_review, synchronize]
+  # Hourly runs are best effort on GitHub; every push to main also starts one.
+  schedule:
+    - cron: "30 * * * *"
+  push:
+    branches: [main]
+  workflow_dispatch:
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 jobs:
   auto-merge:
-    if: ${{ !github.event.pull_request.draft }}
+    permissions:
+      contents: write
+      pull-requests: write
+    if: ${{ github.event_name == 'pull_request' && !github.event.pull_request.draft }}
     runs-on: ubuntu-latest
     steps:
       - id: meta
         if: github.event.pull_request.user.login == 'dependabot[bot]'
-        uses: dependabot/fetch-metadata@v3
+        uses: dependabot/fetch-metadata@25dd0e34f4fe68f24cc83900b1fe3fe149efef98 # v3.1.0
       - name: Enable auto-merge
         env:
           GH_TOKEN: ${{ secrets.OWNER_TOKEN || secrets.GITHUB_TOKEN }}
@@ -39,3 +50,26 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR: ${{ github.event.pull_request.html_url }}
         run: gh pr edit "$PR" --add-label "deps/major"
+
+  sweep:
+    permissions:
+      contents: write
+      pull-requests: write
+    if: ${{ github.event_name != 'pull_request' }}
+    concurrency:
+      group: auto-merge-sweep
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enable auto-merge where it is missing
+        env:
+          GH_TOKEN: ${{ secrets.OWNER_TOKEN || secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr list --repo "$GITHUB_REPOSITORY" --state open --limit 200 \
+            --json number,title,isDraft,autoMergeRequest \
+            --jq '.[] | select(.isDraft | not) | select(.autoMergeRequest == null) | "\(.number)\t\(.title)"' |
+            while IFS=$'\t' read -r number title; do
+              echo "Enabling auto-merge on #$number"
+              gh pr merge "$number" --repo "$GITHUB_REPOSITORY" --auto --squash \
+                --subject "$title (#$number)" --body "" || echo "::warning::#$number: auto-merge not enabled"
+            done

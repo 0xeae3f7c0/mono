@@ -13,11 +13,13 @@ on:
     types: [opened, reopened, ready_for_review]
 
 permissions:
-  issues: write
-  pull-requests: write
+  contents: read
 
 jobs:
   assign:
+    permissions:
+      issues: write
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - name: Assign the owner
@@ -28,6 +30,9 @@ jobs:
         run: gh pr edit "$PR" --repo "$GITHUB_REPOSITORY" --add-assignee "$ASSIGNEE"
 
   request-review:
+    permissions:
+      issues: write
+      pull-requests: write
     if: ${{ !github.event.pull_request.draft && github.event.pull_request.user.login != github.repository_owner }}
     runs-on: ubuntu-latest
     steps:
