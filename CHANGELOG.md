@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.2](https://github.com/0xeae3f7c0/mono/compare/v0.6.1...v0.6.2) (2026-11-22)
+
+
+### Build
+
+* **nix:** track nixpkgs-unstable, add fenix ([a48eb4c](https://github.com/0xeae3f7c0/mono/commit/a48eb4c34b0a3f3c8acd04f3a673510b13ee9cdf))
+
 ## [0.6.1](https://github.com/0xeae3f7c0/mono/compare/v0.6.0...v0.6.1) (2026-11-22)
 
 
