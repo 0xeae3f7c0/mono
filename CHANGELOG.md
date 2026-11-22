@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.6.4](https://github.com/0xeae3f7c0/mono/compare/v0.6.3...v0.6.4) (2026-11-22)
+
+
+### Bug Fixes
+
+* **deps:** replace dependency @material-ui/icons with @mui/icons-material ^5.0.0 ([#239](https://github.com/0xeae3f7c0/mono/issues/239)) ([91a421d](https://github.com/0xeae3f7c0/mono/commit/91a421d8938fc3a27628aee942ffff9f9e6ac21d))
+* **deps:** update dependency @testing-library/jest-dom to v8 ([#247](https://github.com/0xeae3f7c0/mono/issues/247)) ([80214d8](https://github.com/0xeae3f7c0/mono/commit/80214d89b7ae633a447567ed592e551b3d164f62))
+* **deps:** update dependency uuid to v14 ([#248](https://github.com/0xeae3f7c0/mono/issues/248)) ([348a0cc](https://github.com/0xeae3f7c0/mono/commit/348a0ccbe4407e771e5c968cbc71aefee773cd4e))
+* **deps:** update module go.opentelemetry.io/otel/trace to v1.47.0 [security] ([#237](https://github.com/0xeae3f7c0/mono/issues/237)) ([abff9bc](https://github.com/0xeae3f7c0/mono/commit/abff9bc30e866d9d4e753cdda30e530bac2f504d))
+* **deps:** update npm to v12 ([#250](https://github.com/0xeae3f7c0/mono/issues/250)) ([136bb6a](https://github.com/0xeae3f7c0/mono/commit/136bb6afdd49eb0b15bd69c1841842851d348966))
+* **deps:** update rust crate toml to v1.2.2 ([#242](https://github.com/0xeae3f7c0/mono/issues/242)) ([d04975b](https://github.com/0xeae3f7c0/mono/commit/d04975b0c72c2ee6802d5fdcf39c19a47164a58b))
+* **deps:** update rust crate url to v2.5.9 ([#243](https://github.com/0xeae3f7c0/mono/issues/243)) ([7dcba25](https://github.com/0xeae3f7c0/mono/commit/7dcba255b7febf7926c5cd2fdda66e11cd64ff44))
+* **deps:** update yarn monorepo ([#245](https://github.com/0xeae3f7c0/mono/issues/245)) ([2f56a88](https://github.com/0xeae3f7c0/mono/commit/2f56a88c26c3c488ebdb3b7d0976e9a4748ceece))
+
 ## [0.6.3](https://github.com/0xeae3f7c0/mono/compare/v0.6.2...v0.6.3) (2026-11-22)
 
 
