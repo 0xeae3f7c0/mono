@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.5](https://github.com/0xeae3f7c0/mono/compare/v0.6.4...v0.6.5) (2026-11-22)
+
+
+### Bug Fixes
+
+* **deps:** update rust crate wasmtime to v51 ([#252](https://github.com/0xeae3f7c0/mono/issues/252)) ([5f46d92](https://github.com/0xeae3f7c0/mono/commit/5f46d92ff69cf78893184c47be8565283165106a))
+
 ## [0.6.4](https://github.com/0xeae3f7c0/mono/compare/v0.6.3...v0.6.4) (2026-11-22)
 
 
