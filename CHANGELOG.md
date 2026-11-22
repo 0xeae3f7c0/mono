@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.1](https://github.com/0xeae3f7c0/mono/compare/v0.6.0...v0.6.1) (2026-11-22)
+
+
+### Bug Fixes
+
+* **deps:** bump react-router-dom from 7.18.5 to 7.18.6 in /pkgs/portal ([#230](https://github.com/0xeae3f7c0/mono/issues/230)) ([3ec2dd8](https://github.com/0xeae3f7c0/mono/commit/3ec2dd80acffc8b8d4ff80f5882aa8da0f35999f))
+
 ## [0.6.0](https://github.com/0xeae3f7c0/mono/compare/v0.5.1...v0.6.0) (2026-11-21)
 
 
