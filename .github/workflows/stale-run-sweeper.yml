@@ -14,14 +14,16 @@ on:
         default: true
 
 permissions:
-  actions: write
   contents: read
 
 jobs:
   sweep:
+    permissions:
+      actions: write
+      contents: read
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v9
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         env:
           DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
         with:

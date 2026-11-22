@@ -21,8 +21,7 @@ on:
         default: false
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 concurrency:
   group: approve-ready-prs
@@ -30,9 +29,12 @@ concurrency:
 
 jobs:
   approve:
+    permissions:
+      contents: write
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - run: bash scripts/approve-ready-prs.sh
         env:
           GH_TOKEN: ${{ secrets.OWNER_TOKEN || secrets.GITHUB_TOKEN }}

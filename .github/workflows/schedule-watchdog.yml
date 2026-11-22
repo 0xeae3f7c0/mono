@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  actions: write
+  contents: read
 
 concurrency:
   group: schedule-watchdog
@@ -19,6 +19,8 @@ concurrency:
 
 jobs:
   watchdog:
+    permissions:
+      actions: write
     runs-on: ubuntu-latest
     steps:
       - name: Dispatch overdue workflows

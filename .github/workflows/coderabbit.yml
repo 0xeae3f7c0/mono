@@ -16,7 +16,7 @@ on:
     types: [opened, reopened, ready_for_review, synchronize]
 
 permissions:
-  pull-requests: write
+  contents: read
 
 concurrency:
   group: coderabbit-${{ github.event.pull_request.number }}
@@ -24,8 +24,10 @@ concurrency:
 
 jobs:
   request-review:
-    # CodeRabbit skips PRs authored by bots (Dependabot, github-actions) unless
-    # the bot has a review seat, so asking for a review there only adds noise.
+    permissions:
+      pull-requests: write
+      # CodeRabbit skips PRs authored by bots (Dependabot, github-actions) unless
+      # the bot has a review seat, so asking for a review there only adds noise.
     if: ${{ !github.event.pull_request.draft && github.event.pull_request.user.type != 'Bot' }}
     runs-on: ubuntu-latest
     steps:

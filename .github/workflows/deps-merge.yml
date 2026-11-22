@@ -19,8 +19,7 @@ on:
         default: true
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 concurrency:
   group: repository-maintenance
@@ -28,9 +27,12 @@ concurrency:
 
 jobs:
   merge:
+    permissions:
+      contents: write
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - run: bash scripts/merge-stale-deps.sh
         env:
           GH_TOKEN: ${{ secrets.OWNER_TOKEN }}

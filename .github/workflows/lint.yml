@@ -41,11 +41,11 @@ jobs:
           - tf-lint
           - commit-lint
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           # secret-scan reads history; commit-lint compares against the base branch.
           fetch-depth: 0
-      - uses: DeterminateSystems/nix-installer-action@v23
+      - uses: DeterminateSystems/nix-installer-action@3138316df39ed29be04236d7ffc686fa525866aa # v23
       - name: Run ${{ matrix.tool }}
         id: run
         continue-on-error: true
