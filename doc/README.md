@@ -119,7 +119,6 @@ Times are UTC. Workflows with a schedule can also be started from the Actions ta
 |---|---|---|
 | Nightly | daily 01:07 | Release-mode tests on Linux, macOS and Windows, docs, Go and web |
 | Activity Report | every 4 hours | Commits per author for the period, in the run summary |
-| Stale | daily 03:41 | Marks and later closes inactive issues and pull requests |
 | Stale Run Sweeper | every 4 hours | Cancels queued runs for outdated commits |
 | Branch Cleanup | Sundays 04:11 | Deletes branches of closed automation pull requests |
 | Labels | on change, Mondays | Syncs `<group>/<name>` labels from `scripts/labels.mjs` |
