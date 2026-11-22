@@ -8,6 +8,6 @@ publish = false
 
 [dependencies]
 anyhow = "1.0.104"
-wasmtime = "50.0.3"
+wasmtime = "51.0.0"
 
 [workspace]
