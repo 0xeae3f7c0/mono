@@ -2,7 +2,10 @@
   description = "commit: self-hosted engineering-activity platform";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    # nixpkgs-unstable advances as soon as Hydra builds a revision (several times a
+    # day); nixos-unstable additionally waits for the NixOS VM tests, which this
+    # repository does not need for its packages and dev shell.
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     flake-utils.url = "github:numtide/flake-utils";
     # Rust toolchain matching rust-toolchain.toml, for reproducible package builds.
     rust-overlay = {
@@ -11,6 +14,11 @@
     };
     # Builds Cargo projects from their Cargo.lock with cached dependency layers.
     crane.url = "github:ipetkov/crane";
+    # Nightly rust-analyzer for the dev shell (editors), rebuilt daily.
+    fenix = {
+      url = "github:nix-community/fenix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     # `nix fmt` through treefmt, and a formatting check in `nix flake check`.
     treefmt-nix = {
       url = "github:numtide/treefmt-nix";
@@ -51,6 +59,7 @@
       flake-utils,
       rust-overlay,
       crane,
+      fenix,
       treefmt-nix,
       git-hooks,
       advisory-db,
@@ -110,7 +119,7 @@
 
         # `nix develop` (or direnv with .envrc): every toolchain the monorepo uses.
         devShells.default = pkgs.mkShell {
-          packages = devPackages.tools;
+          packages = devPackages.tools ++ [ fenix.packages.${system}.rust-analyzer ];
           buildInputs = devPackages.nativeLibs;
           shellHook = preCommit.shellHook + ''
             corepack enable --install-directory "$PWD/.direnv/bin" 2>/dev/null || true
