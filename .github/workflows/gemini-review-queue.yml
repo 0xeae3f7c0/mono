@@ -1,0 +1,54 @@
+name: Gemini Review Queue
+
+# Comments `/gemini review` on one pull request at a time (oldest first) and
+# waits for Gemini Code Assist to submit that review before asking about the
+# next one. Every new push to a pull request puts it back in the queue.
+# See scripts/gemini-review-queue.mjs.
+#
+# The comment is posted with OWNER_TOKEN, so it comes from the owner; Gemini
+# may ignore commands from bot accounts such as github-actions[bot].
+
+on:
+  # Gemini finishing a review moves the queue on right away.
+  pull_request_review:
+    types: [submitted]
+  pull_request:
+    types: [opened, reopened, ready_for_review, synchronize]
+  # Best effort fallback, also catches requests that timed out.
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Only report what would change
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gemini-review-queue
+  cancel-in-progress: false
+
+jobs:
+  next:
+    permissions:
+      contents: read
+      pull-requests: read
+    # Dependabot-triggered runs get no secrets; the next other run picks it up.
+    if: ${{ github.actor != 'dependabot[bot]' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: |
+            scripts
+            .gemini
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+      - run: node scripts/gemini-review-queue.mjs
+        env:
+          GH_TOKEN: ${{ secrets.OWNER_TOKEN }}
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}

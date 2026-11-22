@@ -6,12 +6,15 @@ name: Schedule Watchdog
 # workflow_dispatch is one of the events GITHUB_TOKEN is allowed to trigger.
 
 on:
+  # Hourly runs are best effort on GitHub; every push to main also starts one.
   schedule:
     - cron: "5 * * * *"
+  push:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
-  actions: write
+  contents: read
 
 concurrency:
   group: schedule-watchdog
@@ -19,6 +22,8 @@ concurrency:
 
 jobs:
   watchdog:
+    permissions:
+      actions: write
     runs-on: ubuntu-latest
     steps:
       - name: Dispatch overdue workflows
@@ -27,8 +32,6 @@ jobs:
           MAX_AGE_HOURS: 4
           REF: ${{ github.event.repository.default_branch }}
           WORKFLOWS: >-
-            maintenance.yml
-            deps-merge.yml
             dependabot-alerts.yml
             activity-report.yml
             stale-run-sweeper.yml

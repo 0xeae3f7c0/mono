@@ -195,15 +195,23 @@ function labeler() {
   ].join("\n");
 }
 
-// Keep action versions in step with what Dependabot has already bumped: use
-// the highest major found for each action across the existing workflows.
+// Actions are pinned to commit SHAs (OpenSSF Scorecard Pinned-Dependencies),
+// with the version as a comment. Templates name a major (or a branch such as
+// `stable`); reuse the SHA that Dependabot has already bumped in the existing
+// workflows, taking the highest version found for each action.
 const pinned = {};
+const major = (tag) => Number(/^v(\d+)/.exec(tag)?.[1] ?? 0);
 for (const f of readdirSync(".github/workflows")) {
-  for (const [, action, major] of readFileSync(`.github/workflows/${f}`, "utf8").matchAll(/uses: ([\w./-]+)@v(\d+)/g)) {
-    pinned[action] = Math.max(pinned[action] ?? 0, Number(major));
+  const text = readFileSync(`.github/workflows/${f}`, "utf8");
+  for (const [, action, sha, tag] of text.matchAll(/uses: ([\w./-]+)@([0-9a-f]{40}) # (\S+)/g)) {
+    const seen = pinned[action];
+    if (!seen || major(tag) > major(seen.tag) || (major(tag) === major(seen.tag) && tag.localeCompare(seen.tag, undefined, { numeric: true }) > 0)) {
+      pinned[action] = { sha, tag };
+    }
   }
 }
-const pin = (text) => text.replace(/uses: ([\w./-]+)@v(\d+)/g, (m, a, v) => `uses: ${a}@v${Math.max(Number(v), pinned[a] ?? 0)}`);
+const pin = (text) =>
+  text.replace(/uses: ([\w./-]+)@([\w.-]+)$/gm, (m, a) => (pinned[a] ? `uses: ${a}@${pinned[a].sha} # ${pinned[a].tag}` : m));
 
 let stale = 0;
 const wanted = new Set();

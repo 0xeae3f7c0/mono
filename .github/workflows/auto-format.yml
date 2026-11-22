@@ -1,7 +1,8 @@
 name: Auto Format
 
-# Formats main after every push and commits the result only when rustfmt
-# changes tracked files. Pushes with OWNER_TOKEN so CI runs on the commit
+# Formats main after every push and regenerates the generated files that CI
+# checks (project workflows, labeler config, portal catalog), committing the
+# result only when tracked files change. Never commits deletions. Pushes with OWNER_TOKEN so CI runs on the commit
 # (pushes made with GITHUB_TOKEN do not trigger workflows). The follow-up push
 # produces no diff, so this does not loop.
 
@@ -11,7 +12,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: auto-format
@@ -19,16 +20,27 @@ concurrency:
 
 jobs:
   format:
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           token: ${{ secrets.OWNER_TOKEN || secrets.GITHUB_TOKEN }}
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@39008827e6b4319a349e9a42dfc90579dd25f1ca # stable
         with:
           components: rustfmt
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
       - name: Apply formatting
         run: cargo fmt --all
+      - name: Regenerate generated files
+        run: |
+          node scripts/gen-pkg-workflows.mjs
+          node scripts/gen-catalog.mjs
+          # Keep any file a generator removed; deletions stay a human decision.
+          git ls-files --deleted -z | xargs -0 -r git checkout --
       - name: Commit if changed
         env:
           GH_TOKEN: ${{ secrets.OWNER_TOKEN }}
@@ -43,6 +55,6 @@ jobs:
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           fi
-          git commit -am "style: apply cargo fmt"
+          git commit -am "chore: apply formatting and regenerate files"
           git pull --rebase origin main
           git push origin HEAD:main

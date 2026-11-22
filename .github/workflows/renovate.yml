@@ -9,8 +9,13 @@ name: Renovate
 # workflow (pull requests opened with the default GITHUB_TOKEN do not).
 
 on:
+  # GitHub runs scheduled workflows best effort and drops many runs at the top
+  # of the hour, so the schedule sits at :13 and every push to main (each merged
+  # update) also starts a run. The concurrency group keeps runs one at a time.
   schedule:
-    - cron: "0 * * * *"
+    - cron: "13 * * * *"
+  push:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -24,7 +29,7 @@ jobs:
   renovate:
     runs-on: ubuntu-latest
     steps:
-      - uses: renovatebot/github-action@v46.3.14
+      - uses: renovatebot/github-action@acdd6bda8b035c99ce59d5675816af2aa65a1774 # v46.3.14
         with:
           token: ${{ secrets.OWNER_TOKEN }}
         env:
