@@ -2,10 +2,9 @@
 // Mirrors open security alerts into issues and closes them once the alerts are
 // fixed or dismissed. Two sources:
 //   - Dependabot alerts (the default): one issue per alert.
-//   - Code scanning alerts (CodeQL, Scorecard, ...): one issue per tool and rule,
-//     listing every open alert for it, because one rule can raise dozens.
+//   - Code scanning alerts (CodeQL, Scorecard, ...): one issue per alert.
 // Each issue carries a hidden marker (<!-- dependabot-alert:N --> or
-// <!-- code-scanning-rule:Tool/Rule -->) so reruns update, never duplicate.
+// <!-- code-scanning-alert:N -->) so reruns update, never duplicate.
 //
 //   GH_TOKEN=... GITHUB_REPOSITORY=owner/repo [DRY_RUN=true] node scripts/alerts-to-issues.mjs [--source code-scanning]
 
@@ -76,52 +75,36 @@ export function issueFor(alert) {
   return { title, body, labels };
 }
 
-/** Grouping key for a code scanning alert: one issue per tool and rule. */
-export const ruleKey = (alert) => `${alert.tool.name}/${alert.rule.id}`;
-
-const SEVERITY_ORDER = ["critical", "high", "error", "medium", "warning", "low", "note"];
-const MAX_LOCATIONS = 100;
-
-/**
- * Issue title, labels and body for one code scanning rule, listing every open
- * alert raised by it. Scorecard alone raises dozens of alerts per rule (one per
- * unpinned action), so one issue per alert would flood the tracker.
- */
-export function codeScanningIssueFor(alerts) {
-  const [first] = alerts;
-  const rule = first.rule;
-  const severities = alerts.map((a) => a.rule.security_severity_level ?? a.rule.severity ?? "warning");
-  const severity = SEVERITY_ORDER.find((s) => severities.includes(s)) ?? "warning";
-  const rows = alerts
-    .map((a) => {
-      const location = a.most_recent_instance?.location ?? {};
-      const where = location.path ? `${location.path}${location.start_line ? `:${location.start_line}` : ""}` : "unknown";
-      return { path: location.path ?? "", line: `- [ ] [\`${where}\`](${a.html_url})` };
-    })
-    .sort((x, y) => x.line.localeCompare(y.line));
-  const apps = [...new Set(rows.map((r) => appLabel(r.path)))].sort();
-  const title = `fix(security): ${rule.description ?? rule.id} (${first.tool.name} ${rule.id})`;
+/** Issue title, labels and body for one code scanning alert. */
+export function codeScanningIssueFor(alert) {
+  const rule = alert.rule;
+  const severity = rule.security_severity_level ?? rule.severity ?? "warning";
+  const location = alert.most_recent_instance?.location ?? {};
+  const path = location.path ?? "";
+  const where = path ? `${path}${location.start_line ? `:${location.start_line}` : ""}` : "unknown location";
+  const title = `fix(security): ${rule.description ?? rule.id} in ${where} (${alert.tool.name} #${alert.number})`;
   const body = [
-    `<!-- code-scanning-rule:${ruleKey(first)} -->`,
+    `<!-- code-scanning-alert:${alert.number} -->`,
     `**${rule.description ?? rule.id}**`,
     "",
     "| | |",
     "|---|---|",
-    `| Tool | ${first.tool.name} |`,
+    `| Tool | ${alert.tool.name} |`,
     `| Rule | \`${rule.id}\` |`,
     `| Severity | ${severity} |`,
-    `| Open alerts | ${alerts.length} |`,
+    `| Location | \`${where}\` |`,
     "",
-    ...rows.slice(0, MAX_LOCATIONS).map((r) => r.line),
-    ...(rows.length > MAX_LOCATIONS ? [`- … and ${rows.length - MAX_LOCATIONS} more in Security → Code scanning`] : []),
+    alert.most_recent_instance?.message?.text ?? "",
     "",
-    "_This issue is updated as alerts change and closes when none are left open._",
+    `Code scanning alert: ${alert.html_url}`,
+    "",
+    "_This issue closes automatically when the alert is fixed or dismissed._",
   ].join("\n");
   const labels = [
     "kind/security",
     "source/code-scanning",
     "status/needs-triage",
-    ...apps,
+    appLabel(path),
     SEVERITY_PRIORITY[severity] ?? "priority/normal",
   ];
   return { title, body, labels };
@@ -229,80 +212,69 @@ async function main() {
   );
 }
 
-const RULE_MARKER = /<!-- code-scanning-rule:(\S+) -->/;
-// Issues from the first version of this script, one per alert. They are closed
-// in favour of the per-rule issue; nothing is deleted.
 const ALERT_MARKER = /<!-- code-scanning-alert:(\d+) -->/;
+// Issues from the previous version of this script, one per rule. They are
+// closed in favour of the per-alert issues; nothing is deleted.
+const RULE_MARKER = /<!-- code-scanning-rule:(\S+) -->/;
 
-/** One issue per code scanning rule with open alerts; closes rules with none left. */
+/** One issue per open code scanning alert; closes issues whose alert is fixed or dismissed. */
 async function syncCodeScanning({ api, all, dryRun }) {
   const alerts = await all("/code-scanning/alerts?state=open");
   const issues = (await all("/issues?state=all&labels=source/code-scanning,kind/security")).filter((i) => !i.pull_request);
-  const byRule = new Map();
+  const byAlert = new Map();
   const legacy = [];
   for (const issue of issues) {
-    const m = issue.body?.match(RULE_MARKER);
-    if (m) byRule.set(m[1], issue);
-    else if (ALERT_MARKER.test(issue.body ?? "") && issue.state === "open") legacy.push(issue);
-  }
-
-  const groups = new Map();
-  for (const alert of alerts) {
-    const key = ruleKey(alert);
-    if (!groups.has(key)) groups.set(key, []);
-    groups.get(key).push(alert);
+    const m = issue.body?.match(ALERT_MARKER);
+    if (m) byAlert.set(Number(m[1]), issue);
+    else if (RULE_MARKER.test(issue.body ?? "") && issue.state === "open") legacy.push(issue);
   }
 
   let created = 0;
-  let updated = 0;
+  let reopened = 0;
   let closed = 0;
-  const numbers = new Map();
-  const titles = new Map();
-  for (const [key, group] of groups) {
-    const issue = codeScanningIssueFor(group);
-    titles.set(issue.title, key);
-    const existing = byRule.get(key);
+  const open = new Set(alerts.map((a) => a.number));
+  for (const alert of alerts) {
+    const existing = byAlert.get(alert.number);
+    const issue = codeScanningIssueFor(alert);
     if (!existing) {
-      console.log(`create: ${issue.title} (${group.length} alerts)`);
-      if (!dryRun) numbers.set(key, (await api("/issues", { method: "POST", body: JSON.stringify(issue) })).number);
+      console.log(`create: ${issue.title}`);
+      if (!dryRun) await api("/issues", { method: "POST", body: JSON.stringify(issue) });
       created++;
-    } else if (existing.state === "closed" || existing.body !== issue.body) {
-      console.log(`update #${existing.number}: ${key} has ${group.length} open alerts`);
-      const patch = { body: issue.body, ...(existing.state === "closed" ? { state: "open" } : {}) };
-      if (!dryRun) await api(`/issues/${existing.number}`, { method: "PATCH", body: JSON.stringify(patch) });
-      numbers.set(key, existing.number);
-      updated++;
-    } else {
-      numbers.set(key, existing.number);
+    } else if (existing.state === "closed") {
+      console.log(`reopen #${existing.number}: alert ${alert.number} is open again`);
+      if (!dryRun) {
+        await api(`/issues/${existing.number}`, { method: "PATCH", body: JSON.stringify({ state: "open", body: issue.body }) });
+      }
+      reopened++;
     }
   }
-  for (const [key, issue] of byRule) {
-    if (groups.has(key) || issue.state === "closed") continue;
-    console.log(`close #${issue.number}: no open ${key} alerts`);
+  for (const [number, issue] of byAlert) {
+    if (open.has(number) || issue.state === "closed") continue;
+    const alert = await api(`/code-scanning/alerts/${number}`);
+    const reason = alert.state === "fixed" ? "completed" : "not_planned";
+    console.log(`close #${issue.number}: alert ${number} is ${alert.state}`);
     if (!dryRun) {
       await api(`/issues/${issue.number}/comments`, {
         method: "POST",
-        body: JSON.stringify({ body: `No open code scanning alerts remain for \`${key}\`; closing.` }),
+        body: JSON.stringify({ body: `Code scanning alert ${number} is now **${alert.state}**; closing.` }),
       });
-      await api(`/issues/${issue.number}`, { method: "PATCH", body: JSON.stringify({ state: "closed", state_reason: "completed" }) });
+      await api(`/issues/${issue.number}`, { method: "PATCH", body: JSON.stringify({ state: "closed", state_reason: reason }) });
     }
     closed++;
   }
   for (const issue of legacy) {
-    // Old and new issues share a title format, so the title finds the rule.
-    const target = numbers.get(titles.get(issue.title));
-    console.log(`close #${issue.number}: replaced by the per-rule issue${target ? ` #${target}` : ""}`);
+    console.log(`close #${issue.number}: replaced by one issue per alert`);
     if (!dryRun) {
       await api(`/issues/${issue.number}/comments`, {
         method: "POST",
-        body: JSON.stringify({ body: `Code scanning alerts are now tracked one issue per rule${target ? `: see #${target}` : ""}. Closing.` }),
+        body: JSON.stringify({ body: "Code scanning alerts are now tracked one issue per alert. Closing." }),
       });
       await api(`/issues/${issue.number}`, { method: "PATCH", body: JSON.stringify({ state: "closed", state_reason: "not_planned" }) });
     }
     closed++;
   }
   console.log(
-    `${alerts.length} open alerts in ${groups.size} rules: ${created} issues created, ${updated} updated, ${closed} closed${dryRun ? " (dry run)" : ""}.`,
+    `${alerts.length} open alerts: ${created} issues created, ${reopened} reopened, ${closed} closed${dryRun ? " (dry run)" : ""}.`,
   );
 }
 

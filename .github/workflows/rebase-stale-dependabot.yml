@@ -5,8 +5,11 @@ name: Rebase Stale Dependabot PRs
 # Needs OWNER_TOKEN: Dependabot ignores commands posted by bot accounts.
 
 on:
+  # Hourly runs are best effort on GitHub; every push to main also starts one.
   schedule:
     - cron: "45 * * * *"
+  push:
+    branches: [main]
   workflow_dispatch:
     inputs:
       dry_run:
@@ -25,7 +28,7 @@ jobs:
   rebase:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - run: bash scripts/rebase-stale-dependabot.sh
         env:
           GH_TOKEN: ${{ secrets.OWNER_TOKEN }}

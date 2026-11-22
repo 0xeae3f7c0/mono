@@ -16,7 +16,7 @@ on:
     types: [opened, reopened, ready_for_review, synchronize]
 
 permissions:
-  pull-requests: write
+  contents: read
 
 concurrency:
   group: coderabbit-${{ github.event.pull_request.number }}
@@ -24,12 +24,45 @@ concurrency:
 
 jobs:
   request-review:
-    # CodeRabbit skips PRs authored by bots (Dependabot, github-actions) unless
-    # the bot has a review seat, so asking for a review there only adds noise.
+    permissions:
+      contents: read
+      pull-requests: write
+      # CodeRabbit skips PRs authored by bots (Dependabot, github-actions) unless
+      # the bot has a review seat, so asking for a review there only adds noise.
     if: ${{ !github.event.pull_request.draft && github.event.pull_request.user.type != 'Bot' }}
     runs-on: ubuntu-latest
     steps:
+      # Base branch only, for the path filters; PR code is never checked out.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: .coderabbit.yaml
+          sparse-checkout-cone-mode: false
+      - name: Skip pull requests that only touch filtered paths
+        id: filter
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          # Exclusions ("!pattern") from reviews.path_filters in .coderabbit.yaml.
+          mapfile -t patterns < <(yq '.reviews.path_filters[] | select(test("^!")) | sub("^!"; "")' .coderabbit.yaml)
+          shopt -s extglob
+          reviewable=0
+          while read -r file; do
+            ignored=0
+            for pattern in "${patterns[@]}"; do
+              # In [[ == ]] a * also matches /, so "**/x" covers x in any
+              # subdirectory; the stripped form covers x at the root.
+              # shellcheck disable=SC2053 # the patterns are globs on purpose
+              if [[ "$file" == $pattern || "$file" == ${pattern#\*\*/} ]]; then ignored=1; break; fi
+            done
+            if (( ! ignored )); then reviewable=1; break; fi
+          done < <(gh api --paginate "repos/$GITHUB_REPOSITORY/pulls/$PR/files" --jq '.[].filename')
+          if (( ! reviewable )); then
+            echo "Every changed file on #$PR is excluded by .coderabbit.yaml; not requesting a review."
+          fi
+          echo "review=$reviewable" >> "$GITHUB_OUTPUT"
       - name: Comment @coderabbitai review
+        if: steps.filter.outputs.review == '1'
         env:
           GH_TOKEN: ${{ secrets.OWNER_TOKEN || secrets.GITHUB_TOKEN }}
           PR: ${{ github.event.pull_request.number }}

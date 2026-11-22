@@ -1,13 +1,14 @@
 name: Automated Code Review
 
+# Runs the repository's own review (`cargo run -- review`) and posts a summary
+# comment. Formatting, Clippy and tests run in CI (ci.yml), not here.
+
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
 
 permissions:
   contents: read
-  pull-requests: read
-  issues: write
 
 concurrency:
   group: review-${{ github.event.pull_request.number }}
@@ -15,23 +16,19 @@ concurrency:
 
 jobs:
   review:
+    permissions:
+      contents: read
+      pull-requests: read
+      issues: write
     name: Automated review checks
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          components: rustfmt, clippy
-      - uses: Swatinem/rust-cache@v2
-      - name: Check formatting
-        run: cargo fmt --all -- --check
-      - name: Run Clippy
-        run: cargo clippy --all-targets --all-features -- -D warnings
-      - name: Run tests
-        run: cargo test --all --all-features
+      - uses: dtolnay/rust-toolchain@39008827e6b4319a349e9a42dfc90579dd25f1ca # stable
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
       - name: Run repository review
         run: cargo run -- review origin/${{ github.event.pull_request.base.ref }}
 
@@ -46,7 +43,7 @@ jobs:
       issues: write
       pull-requests: write
     steps:
-      - uses: actions/github-script@v9
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         with:
           # OWNER_TOKEN posts the review as the repository owner; falls back to the bot.
           github-token: ${{ secrets.OWNER_TOKEN || github.token }}

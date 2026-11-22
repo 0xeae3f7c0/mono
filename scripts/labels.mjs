@@ -53,6 +53,7 @@ const groups = {
     renovate: "Opened by Renovate",
     "code-scanning": "Opened from a code scanning alert",
     maintenance: "Opened by a maintenance workflow",
+    "workflow-health": "Opened from a workflow lint finding or failing run",
   }],
 };
 

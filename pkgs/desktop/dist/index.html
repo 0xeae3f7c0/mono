@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>commit status</title>
+    <style>
+      body { font-family: system-ui, sans-serif; margin: 1.5rem; }
+      textarea { width: 100%; height: 10rem; font-family: ui-monospace, monospace; }
+      #state { font-size: 1.5rem; font-weight: 600; margin-top: 1rem; }
+      .passing { color: #1a7f37; } .failing { color: #cf222e; } .running { color: #9a6700; }
+    </style>
+  </head>
+  <body>
+    <h1>commit status</h1>
+    <p>Paste workflow runs as JSON (for example <code>gh run list --json conclusion</code>).</p>
+    <textarea id="runs">[]</textarea>
+    <p><button id="summarize" type="button">Summarize</button></p>
+    <div id="state" role="status"></div>
+    <script>
+      // ci_summary is the Tauri command in src/main.rs (withGlobalTauri exposes window.__TAURI__).
+      const { invoke } = window.__TAURI__.core;
+      const out = document.getElementById("state");
+      document.getElementById("summarize").addEventListener("click", async () => {
+        try {
+          const s = await invoke("ci_summary", { runsJson: document.getElementById("runs").value });
+          out.className = s.state;
+          out.textContent = `${s.state}: ${s.passed} passed, ${s.failed} failed, ${s.running} running`;
+        } catch (e) {
+          out.className = "";
+          out.textContent = `Error: ${e}`;
+        }
+      });
+    </script>
+  </body>
+</html>
