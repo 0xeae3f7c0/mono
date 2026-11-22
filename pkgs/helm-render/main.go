@@ -9,9 +9,10 @@ import (
 	"os"
 	"sort"
 
-	"helm.sh/helm/v3/pkg/chart/loader"
-	"helm.sh/helm/v3/pkg/chartutil"
-	"helm.sh/helm/v3/pkg/engine"
+	"helm.sh/helm/v4/pkg/chart/common"
+	chartutil "helm.sh/helm/v4/pkg/chart/common/util"
+	"helm.sh/helm/v4/pkg/chart/v2/loader"
+	"helm.sh/helm/v4/pkg/engine"
 )
 
 // render returns manifests keyed by template path, with empty output dropped.
@@ -21,8 +22,8 @@ func render(chartDir, releaseName string) (map[string]string, error) {
 		return nil, fmt.Errorf("load chart: %w", err)
 	}
 	values, err := chartutil.ToRenderValues(chart, chart.Values,
-		chartutil.ReleaseOptions{Name: releaseName, Namespace: "default", IsInstall: true},
-		chartutil.DefaultCapabilities)
+		common.ReleaseOptions{Name: releaseName, Namespace: "default", IsInstall: true},
+		common.DefaultCapabilities)
 	if err != nil {
 		return nil, err
 	}

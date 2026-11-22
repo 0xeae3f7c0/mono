@@ -37,3 +37,15 @@ updates:
     labels: [kind/deps, area/infra, source/dependabot]
     commit-message:
       prefix: "build(deps)"
+
+  # No version updates (Renovate owns Cargo); this entry exists only so security
+  # updates skip glib in pkgs/desktop. Tauri 2's Linux webview is built on GTK 3
+  # (gtk 0.18), which pins glib 0.18; the glib advisory is fixed only in 0.20, so
+  # every security update attempt fails until Tauri moves off gtk-rs 0.18.
+  - package-ecosystem: cargo
+    directory: /pkgs/desktop
+    open-pull-requests-limit: 0
+    schedule:
+      interval: weekly
+    ignore:
+      - dependency-name: glib
