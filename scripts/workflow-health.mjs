@@ -6,8 +6,13 @@
 //     edits above a finding do not reopen it as a new issue).
 //   - Failing workflows: the latest finished run on main of each active
 //     workflow. One issue per workflow; it closes when a later run succeeds.
-// Each issue carries a hidden marker (<!-- workflow-lint:KEY --> or
-// <!-- workflow-failure:ID -->) so reruns update, never duplicate.
+//   - Failing pull requests: the latest finished run of each workflow on the
+//     head commit of each open pull request. One issue per pull request,
+//     listing its failing workflows; it closes when the current head has no
+//     failing runs, or when the pull request is merged or closed.
+// Each issue carries a hidden marker (<!-- workflow-lint:KEY -->,
+// <!-- workflow-failure:ID --> or <!-- workflow-pr-failure:N -->) so reruns
+// update, never duplicate.
 //
 //   actionlint -format '{{json .}}' > lint.json
 //   GH_TOKEN=... GITHUB_REPOSITORY=owner/repo [DRY_RUN=true] node scripts/workflow-health.mjs --lint lint.json
@@ -18,6 +23,7 @@ import { nextLink } from "./alerts-to-issues.mjs";
 
 const LINT_MARKER = /<!-- workflow-lint:([0-9a-f]+) -->/;
 const FAILURE_MARKER = /<!-- workflow-failure:(\d+) -->/;
+const PR_MARKER = /<!-- workflow-pr-failure:(\d+) -->/;
 const LABELS = ["kind/ci", "area/ci", "source/workflow-health", "status/needs-triage"];
 const FAILED = new Set(["failure", "timed_out", "startup_failure"]);
 // Runs that say nothing about whether the workflow works.
@@ -66,6 +72,34 @@ export function failureIssueFor(workflow, run) {
   return { title: `fix(ci): ${workflow.name} workflow failing on main`, body, labels: [...LABELS, "priority/high"] };
 }
 
+/** Latest finished run of each workflow, ignoring runs that say nothing (cancelled, skipped, ...). */
+export function latestRuns(runs) {
+  const latest = new Map();
+  for (const run of runs) {
+    if (run.status !== "completed" || IGNORED.has(run.conclusion)) continue;
+    const seen = latest.get(run.workflow_id);
+    if (!seen || Date.parse(run.updated_at) > Date.parse(seen.updated_at)) latest.set(run.workflow_id, run);
+  }
+  return [...latest.values()];
+}
+
+/** Issue title, labels and body for a pull request whose head has failing runs. */
+export function prFailureIssueFor(pr, failed) {
+  const body = [
+    `<!-- workflow-pr-failure:${pr.number} -->`,
+    `Pull request #${pr.number} (**${pr.title}**) has failing workflows on its head commit \`${pr.head.sha.slice(0, 7)}\`.`,
+    "",
+    "| Workflow | Run | Conclusion | Event |",
+    "|---|---|---|---|",
+    ...failed
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map((run) => `| ${run.name} | [#${run.run_number}](${run.html_url}) | ${run.conclusion} | ${run.event} |`),
+    "",
+    "_This issue closes automatically when the pull request's head commit has no failing runs, or when it is merged or closed._",
+  ].join("\n");
+  return { title: `fix(ci): workflows failing on #${pr.number}`, body, labels: [...LABELS, "priority/normal"] };
+}
+
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function main() {
@@ -95,12 +129,15 @@ async function main() {
     const res = await request(`${base}${path}`, init);
     return res.status === 204 ? null : res.json();
   };
-  const all = async (path) => {
+  // `key` names the array in endpoints that wrap it in an object, such as
+  // { total_count, workflows: [...] } from /actions/workflows.
+  const all = async (path, key) => {
     const out = [];
     let url = `${base}${path}${path.includes("?") ? "&" : "?"}per_page=100`;
     while (url) {
       const res = await request(url);
-      out.push(...(await res.json()));
+      const page = await res.json();
+      out.push(...(key ? page[key] : page));
       url = nextLink(res.headers.get("link"));
     }
     return out;
@@ -109,7 +146,10 @@ async function main() {
   const issues = (await all("/issues?state=all&labels=source/workflow-health")).filter((i) => !i.pull_request);
   const byLint = new Map();
   const byFailure = new Map();
+  const byPull = new Map();
   for (const issue of issues) {
+    const pull = issue.body?.match(PR_MARKER);
+    if (pull) byPull.set(Number(pull[1]), issue);
     const lint = issue.body?.match(LINT_MARKER);
     const failure = issue.body?.match(FAILURE_MARKER);
     if (lint) byLint.set(lint[1], issue);
@@ -156,7 +196,8 @@ async function main() {
   }
 
   // Latest finished run on main of each active workflow.
-  const { workflows } = await api("/actions/workflows?per_page=100");
+  // More than 100 workflows exist, so every page is read.
+  const workflows = await all("/actions/workflows", "workflows");
   let failing = 0;
   for (const workflow of workflows.filter((w) => w.state === "active")) {
     const { workflow_runs: runs } = await api(`/actions/workflows/${workflow.id}/runs?branch=main&status=completed&per_page=20`);
@@ -171,8 +212,29 @@ async function main() {
     }
   }
 
+  // Latest finished run of each workflow on the head commit of each open pull request.
+  const pulls = await all("/pulls?state=open");
+  const open = new Set(pulls.map((pr) => pr.number));
+  let failingPulls = 0;
+  for (const pr of pulls) {
+    const runs = await all(`/actions/runs?head_sha=${pr.head.sha}`, "workflow_runs");
+    const failed = latestRuns(runs).filter((run) => FAILED.has(run.conclusion));
+    const existing = byPull.get(pr.number);
+    if (failed.length) {
+      failingPulls++;
+      await report(existing, prFailureIssueFor(pr, failed));
+    } else if (existing?.state === "open" && runs.length) {
+      await resolve(existing, `No failing runs on #${pr.number} at \`${pr.head.sha.slice(0, 7)}\`; closing.`);
+    }
+  }
+  for (const [number, issue] of byPull) {
+    if (!open.has(number) && issue.state === "open") {
+      await resolve(issue, `#${number} is merged or closed; closing.`);
+    }
+  }
+
   console.log(
-    `${current.size} lint findings, ${failing} failing workflows: ${counts.created} issues created, ` +
+    `${current.size} lint findings, ${failing} failing workflows, ${failingPulls} failing pull requests: ${counts.created} issues created, ` +
       `${counts.reopened} reopened, ${counts.updated} updated, ${counts.closed} closed${dryRun ? " (dry run)" : ""}.`,
   );
 }

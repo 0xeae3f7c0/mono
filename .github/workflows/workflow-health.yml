@@ -1,9 +1,11 @@
 name: Workflow Health
 
-# Lints every workflow with actionlint and checks the latest run on main of
-# each workflow. Opens one issue per lint finding and one per failing
-# workflow (labelled kind/ci, area/ci, source/workflow-health), and closes
-# each issue once the finding is gone or a later run on main succeeds.
+# Lints every workflow with actionlint, checks the latest run on main of each
+# workflow, and checks the runs on the head commit of each open pull request.
+# Opens one issue per lint finding, per workflow failing on main and per pull
+# request with failing runs (labelled kind/ci, area/ci, source/workflow-health),
+# and closes each issue once the finding is gone, a later run succeeds, or the
+# pull request is merged or closed.
 # See scripts/workflow-health.mjs.
 
 on:

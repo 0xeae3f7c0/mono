@@ -112,7 +112,7 @@ Times are UTC. Workflows with a schedule can also be started from the Actions ta
 | Dependabot | daily | GitHub Actions versions; patch and minor updates squash-merge automatically. |
 | Dependabot Alerts to Issues | every 4 hours | One issue per open security alert (`kind/security`, `app/<project>`, priority by severity); closes when the alert is fixed or dismissed. |
 | Code Scanning Alerts to Issues | every 4 hours | One issue per code scanning rule with open alerts, listing each location (CodeQL, Scorecard; `kind/security`, `source/code-scanning`, `app/<project>`, priority by severity); closes when none are left. |
-| Workflow Health | hourly, every push to main | actionlint on all workflows plus the latest run on main of each workflow; one issue per lint finding or failing workflow (`kind/ci`, `source/workflow-health`); closes when the finding is gone or a later run succeeds. |
+| Workflow Health | hourly, every push to main | actionlint on all workflows, the latest run on main of each workflow, and the runs on each open pull request's head commit; one issue per lint finding, failing workflow or failing pull request (`kind/ci`, `source/workflow-health`); closes when the finding is gone, a later run succeeds, or the pull request is merged or closed. |
 
 ### Housekeeping
 
