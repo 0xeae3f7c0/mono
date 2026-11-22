@@ -27,7 +27,7 @@ jobs:
           script: |
             const { owner, repo } = context.repo;
             const dryRun = process.env.DRY_RUN === 'true';
-            const prefixes = ['automation/', 'activity/', 'deps/', 'dependabot/'];
+            const prefixes = ['automation/', 'activity/', 'deps/', 'dependabot/', 'renovate/'];
             const branches = await github.paginate(github.rest.repos.listBranches, { owner, repo, per_page: 100 });
             let deleted = 0;
             for (const { name, protected: isProtected } of branches) {

@@ -50,6 +50,7 @@ const groups = {
     human: "Opened by a person",
     "update-deps": "Opened by scripts/update-deps.sh",
     dependabot: "Opened by Dependabot",
+    renovate: "Opened by Renovate",
     "code-scanning": "Opened from a code scanning alert",
     maintenance: "Opened by a maintenance workflow",
   }],

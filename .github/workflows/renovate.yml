@@ -1,0 +1,33 @@
+name: Renovate
+
+# Hourly version updates for Cargo, Go, Python (uv), OpenTofu and npm
+# (config: renovate.json). Dependabot's schedule cannot run more often than
+# daily, so these ecosystems moved here; Dependabot keeps GitHub Actions,
+# Docker, the dev container and security updates.
+#
+# Uses OWNER_TOKEN so Renovate's pull requests start CI and the Auto Merge
+# workflow (pull requests opened with the default GITHUB_TOKEN do not).
+
+on:
+  schedule:
+    - cron: "0 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: renovate
+  cancel-in-progress: false
+
+jobs:
+  renovate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: renovatebot/github-action@v46.3.14
+        with:
+          token: ${{ secrets.OWNER_TOKEN }}
+        env:
+          RENOVATE_REPOSITORIES: ${{ github.repository }}
+          RENOVATE_ONBOARDING: "false"
+          RENOVATE_REQUIRE_CONFIG: required

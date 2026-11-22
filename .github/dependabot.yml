@@ -1,11 +1,11 @@
 # repository automation (.github/)
-# Cargo, Go and npm version updates come from scripts/update-deps.sh (maintenance.yml),
-# one PR per package; Dependabot security alerts still cover them.
+# Cargo, Go, Python (uv), OpenTofu and npm version updates come from Renovate
+# (renovate.json, run hourly by .github/workflows/renovate.yml) and from
+# scripts/update-deps.sh (maintenance.yml).
 #
 # Dependabot itself handles:
 #   - version updates for GitHub Actions, Docker base images and the dev container;
-#   - version and security updates for Cargo, Go and npm, alongside update-deps.sh,
-#     and for Python (uv) and OpenTofu (terraform) projects in pkgs/.
+#   - security updates for every ecosystem, which need no entry here.
 #     Security updates need "Dependabot security updates" on in Settings.
 # open-pull-requests-limit is 1000 per entry (default 5) so updates never queue up.
 # Directory globs pick up new projects in pkgs/ without editing this file.
@@ -37,82 +37,3 @@ updates:
     labels: [kind/deps, area/infra, source/dependabot]
     commit-message:
       prefix: "build(deps)"
-
-  - package-ecosystem: cargo
-    directories: ["/", "/pkgs/*"]
-    open-pull-requests-limit: 1000
-    schedule:
-      interval: daily
-    labels: [kind/deps, lang/rust, source/dependabot]
-    commit-message:
-      prefix: "fix(deps)"
-
-  - package-ecosystem: gomod
-    directories: ["/go", "/pkgs/*"]
-    open-pull-requests-limit: 1000
-    schedule:
-      interval: daily
-    labels: [kind/deps, lang/go, source/dependabot]
-    commit-message:
-      prefix: "fix(deps)"
-
-  - package-ecosystem: uv
-    directories: ["/pkgs/*"]
-    open-pull-requests-limit: 1000
-    schedule:
-      interval: daily
-    labels: [kind/deps, lang/python, source/dependabot]
-    commit-message:
-      prefix: "fix(deps)"
-
-  - package-ecosystem: terraform
-    directories: ["/pkgs/*"]
-    open-pull-requests-limit: 1000
-    schedule:
-      interval: daily
-    labels: [kind/deps, lang/terraform, area/infra, source/dependabot]
-    commit-message:
-      prefix: "build(deps)"
-
-  - package-ecosystem: npm
-    directories: ["/pkgs/*", "/web/*"]
-    open-pull-requests-limit: 1000
-    schedule:
-      interval: daily
-    labels: [kind/deps, lang/js, source/dependabot]
-    # Yarn projects set npmMinimalAgeGate: 3d (pkgs/portal/.yarnrc.yml) and
-    # reject newer releases as "quarantined" (YN0016); wait as long before
-    # proposing a version so its PR can install.
-    cooldown:
-      default-days: 3
-    # Dependabot ignores peer dependencies: TypeScript majors break frameworks
-    # that pin it (Angular 22 in pkgs/admin needs typescript >=6.0 <6.1).
-    # scripts/update-deps.sh still offers them and skips peer conflicts.
-    ignore:
-      - dependency-name: typescript
-        update-types: ["version-update:semver-major"]
-    # Packages released in lockstep must move together: bumping one alone
-    # breaks exact peer ranges (e.g. @vitest/coverage-v8 4.x pins vitest 4.x).
-    groups:
-      vitest:
-        patterns: ["vitest", "@vitest/*"]
-      angular:
-        patterns: ["@angular/*", "@angular-devkit/*"]
-      nestjs:
-        patterns: ["@nestjs/*"]
-      backstage:
-        patterns: ["@backstage/*"]
-      docusaurus:
-        patterns: ["@docusaurus/*"]
-      storybook:
-        patterns: ["storybook", "@storybook/*"]
-      vue:
-        patterns: ["vue", "@vue/*"]
-      sveltekit:
-        patterns: ["svelte", "@sveltejs/*"]
-      react:
-        patterns: ["react", "react-dom", "@types/react", "@types/react-dom"]
-      testing-library:
-        patterns: ["@testing-library/*"]
-    commit-message:
-      prefix: "fix(deps)"
