@@ -28,9 +28,6 @@ resource "github_repository_ruleset" "main" {
   }
 
   rules {
-    deletion         = true
-    non_fast_forward = true
-
     # Auto-merge only waits for required checks; without these it merges a
     # pull request as soon as auto-merge is enabled.
     required_status_checks {

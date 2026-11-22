@@ -2,8 +2,8 @@
 
 The monorepo's GitHub settings as code, written in [OpenTofu](https://opentofu.org/)
 (HCL) with the `integrations/github` provider: a ruleset on `main` that requires
-the `Rust checks` and `Generated files` CI checks, so auto-merge waits for them,
-and blocks force-pushes and deletion. Repository admins can bypass it.
+the `Rust checks` and `Generated files` CI checks, so auto-merge waits for them.
+Force-pushes and branch deletion stay allowed. Repository admins can bypass it.
 
 Part of the [commit](../../ARCHITECTURE.md) platform (stage: **operate**).
 The first HCL project in the monorepo; Dependabot keeps the provider version current.
