@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.3](https://github.com/0xeae3f7c0/mono/compare/v0.6.2...v0.6.3) (2026-11-22)
+
+
+### Bug Fixes
+
+* **deps:** restore daily Dependabot schedule ([cf738d6](https://github.com/0xeae3f7c0/mono/commit/cf738d609dac46593e6e3eaff2f67acf31f41b0c))
+
 ## [0.6.2](https://github.com/0xeae3f7c0/mono/compare/v0.6.1...v0.6.2) (2026-11-22)
 
 
