@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.6](https://github.com/0xeae3f7c0/mono/compare/v0.6.5...v0.6.6) (2026-11-22)
+
+
+### Bug Fixes
+
+* **repo-settings:** allow force-push and deletion ([948c156](https://github.com/0xeae3f7c0/mono/commit/948c15695957ff1a2be92692068be9db3fc72a76))
+
 ## [0.6.5](https://github.com/0xeae3f7c0/mono/compare/v0.6.4...v0.6.5) (2026-11-22)
 
 
