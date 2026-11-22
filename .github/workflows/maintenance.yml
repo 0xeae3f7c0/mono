@@ -1,8 +1,9 @@
 name: Repository Maintenance
 
-# Every 4 hours, scans every Cargo, Go and npm project in the repository
-# (root, go/, web/ and pkgs/*) and opens one PR per dependency with a
-# newer release. Each PR auto-merges
+# Manual only: Renovate (renovate.yml, hourly) now opens the same Cargo, Go
+# and npm update PRs, so this no longer runs on a schedule. When dispatched,
+# scans every Cargo, Go and npm project in the repository (root, go/, web/ and
+# pkgs/*) and opens one PR per dependency with a newer release. Each PR auto-merges
 # (rebase) once required checks pass. A single tracking issue stays open while
 # runs fail.
 #
@@ -10,8 +11,6 @@ name: Repository Maintenance
 # default GITHUB_TOKEN do not trigger CI, so required checks would never run.
 
 on:
-  schedule:
-    - cron: "17 */4 * * *"
   workflow_dispatch:
 
 permissions:

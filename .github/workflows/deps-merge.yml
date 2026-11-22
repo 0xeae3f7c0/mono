@@ -1,13 +1,13 @@
 name: Merge Waiting Dependency PRs
 
-# Every 4 hours (20 minutes after Repository Maintenance): merges kind/deps pull requests that have waited longer than
+# Manual only: Auto Merge (dependabot-auto-merge.yml) merges every pull request
+# once required checks pass, so this no longer runs on a schedule; its --admin
+# merge would bypass those checks. When dispatched: merges kind/deps pull requests that have waited longer than
 # max_age_hours with no failing checks (pending checks are bypassed).
 # Majors and PRs with failing checks are left for review.
 # Requires OWNER_TOKEN from a repository admin for the --admin bypass.
 
 on:
-  schedule:
-    - cron: "37 */4 * * *"
   workflow_dispatch:
     inputs:
       max_age_hours:

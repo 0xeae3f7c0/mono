@@ -1,5 +1,8 @@
 name: Automated Code Review
 
+# Runs the repository's own review (`cargo run -- review`) and posts a summary
+# comment. Formatting, Clippy and tests run in CI (ci.yml), not here.
+
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
@@ -25,15 +28,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
       - uses: dtolnay/rust-toolchain@39008827e6b4319a349e9a42dfc90579dd25f1ca # stable
-        with:
-          components: rustfmt, clippy
       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
-      - name: Check formatting
-        run: cargo fmt --all -- --check
-      - name: Run Clippy
-        run: cargo clippy --all-targets --all-features -- -D warnings
-      - name: Run tests
-        run: cargo test --all --all-features
       - name: Run repository review
         run: cargo run -- review origin/${{ github.event.pull_request.base.ref }}
 
