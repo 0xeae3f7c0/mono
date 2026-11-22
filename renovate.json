@@ -1,44 +1,166 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "description": "Hourly version updates for Cargo, Go, Python (uv), OpenTofu and npm, run by .github/workflows/renovate.yml. Dependabot keeps GitHub Actions, Docker, the dev container and security updates.",
-  "extends": ["config:recommended"],
-  "enabledManagers": ["cargo", "gomod", "pep621", "terraform", "npm"],
+  "extends": [
+    "config:recommended"
+  ],
+  "enabledManagers": [
+    "cargo",
+    "gomod",
+    "pep621",
+    "terraform",
+    "npm"
+  ],
   "dependencyDashboard": false,
   "prHourlyLimit": 0,
   "prConcurrentLimit": 0,
   "branchConcurrentLimit": 0,
   "semanticCommits": "enabled",
   "semanticCommitScope": "deps",
-  "labels": ["kind/deps", "source/renovate"],
-  "postUpdateOptions": ["gomodTidy"],
+  "labels": [
+    "kind/deps",
+    "source/renovate"
+  ],
+  "postUpdateOptions": [
+    "gomodTidy"
+  ],
   "packageRules": [
-    { "matchManagers": ["cargo"], "addLabels": ["lang/rust"], "semanticCommitType": "fix" },
-    { "matchManagers": ["gomod"], "addLabels": ["lang/go"], "semanticCommitType": "fix" },
-    { "matchManagers": ["pep621"], "addLabels": ["lang/python"], "semanticCommitType": "fix" },
-    { "matchManagers": ["terraform"], "addLabels": ["lang/terraform", "area/infra"], "semanticCommitType": "build" },
+    {
+      "description": "Replacement PRs (e.g. @tsconfig/node24 -> node26) swap the package but not the code or config that uses it, so they fail CI and need hand edits. Renovate closes open ones.",
+      "matchUpdateTypes": [
+        "replacement"
+      ],
+      "enabled": false
+    },
+    {
+      "matchManagers": [
+        "cargo"
+      ],
+      "addLabels": [
+        "lang/rust"
+      ],
+      "semanticCommitType": "fix"
+    },
+    {
+      "matchManagers": [
+        "gomod"
+      ],
+      "addLabels": [
+        "lang/go"
+      ],
+      "semanticCommitType": "fix"
+    },
+    {
+      "matchManagers": [
+        "pep621"
+      ],
+      "addLabels": [
+        "lang/python"
+      ],
+      "semanticCommitType": "fix"
+    },
+    {
+      "matchManagers": [
+        "terraform"
+      ],
+      "addLabels": [
+        "lang/terraform",
+        "area/infra"
+      ],
+      "semanticCommitType": "build"
+    },
     {
       "description": "Yarn projects set npmMinimalAgeGate: 3d and reject newer releases (YN0016).",
-      "matchManagers": ["npm"],
-      "addLabels": ["lang/js"],
+      "matchManagers": [
+        "npm"
+      ],
+      "addLabels": [
+        "lang/js"
+      ],
       "semanticCommitType": "fix",
       "minimumReleaseAge": "3 days"
     },
     {
       "description": "TypeScript majors break frameworks that pin it (Angular in pkgs/admin).",
-      "matchManagers": ["npm"],
-      "matchPackageNames": ["typescript"],
-      "matchUpdateTypes": ["major"],
+      "matchManagers": [
+        "npm"
+      ],
+      "matchPackageNames": [
+        "typescript"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
       "enabled": false
     },
-    { "description": "Lockstep packages move together.", "matchPackageNames": ["vitest", "@vitest/**"], "groupName": "vitest" },
-    { "matchPackageNames": ["@angular/**", "@angular-devkit/**"], "groupName": "angular" },
-    { "matchPackageNames": ["@nestjs/**"], "groupName": "nestjs" },
-    { "matchPackageNames": ["@backstage/**"], "groupName": "backstage" },
-    { "matchPackageNames": ["@docusaurus/**"], "groupName": "docusaurus" },
-    { "matchPackageNames": ["storybook", "@storybook/**"], "groupName": "storybook" },
-    { "matchPackageNames": ["vue", "@vue/**"], "groupName": "vue" },
-    { "matchPackageNames": ["svelte", "@sveltejs/**"], "groupName": "sveltekit" },
-    { "matchPackageNames": ["react", "react-dom", "@types/react", "@types/react-dom"], "groupName": "react" },
-    { "matchPackageNames": ["@testing-library/**"], "groupName": "testing-library" }
+    {
+      "description": "Lockstep packages move together.",
+      "matchPackageNames": [
+        "vitest",
+        "@vitest/**"
+      ],
+      "groupName": "vitest"
+    },
+    {
+      "matchPackageNames": [
+        "@angular/**",
+        "@angular-devkit/**"
+      ],
+      "groupName": "angular"
+    },
+    {
+      "matchPackageNames": [
+        "@nestjs/**"
+      ],
+      "groupName": "nestjs"
+    },
+    {
+      "matchPackageNames": [
+        "@backstage/**"
+      ],
+      "groupName": "backstage"
+    },
+    {
+      "matchPackageNames": [
+        "@docusaurus/**"
+      ],
+      "groupName": "docusaurus"
+    },
+    {
+      "matchPackageNames": [
+        "storybook",
+        "@storybook/**"
+      ],
+      "groupName": "storybook"
+    },
+    {
+      "matchPackageNames": [
+        "vue",
+        "@vue/**"
+      ],
+      "groupName": "vue"
+    },
+    {
+      "matchPackageNames": [
+        "svelte",
+        "@sveltejs/**"
+      ],
+      "groupName": "sveltekit"
+    },
+    {
+      "matchPackageNames": [
+        "react",
+        "react-dom",
+        "@types/react",
+        "@types/react-dom"
+      ],
+      "groupName": "react"
+    },
+    {
+      "matchPackageNames": [
+        "@testing-library/**"
+      ],
+      "groupName": "testing-library"
+    }
   ]
 }

@@ -1,0 +1,48 @@
+name: Repo Settings Apply
+
+# Applies pkgs/repo-settings (the main branch ruleset that auto-merge needs)
+# with OpenTofu. Runs when that folder changes on main, daily to undo drift
+# from edits in the UI, and on demand. No state is stored: each run imports the
+# existing ruleset named "main" (if any) and applies on top of it.
+#
+# Needs OWNER_TOKEN with repository Administration: write.
+
+on:
+  push:
+    branches: [main]
+    paths: ["pkgs/repo-settings/**"]
+  schedule:
+    - cron: "23 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: repo-settings-apply
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: pkgs/repo-settings
+    env:
+      GITHUB_TOKEN: ${{ secrets.OWNER_TOKEN }}
+      GH_TOKEN: ${{ secrets.OWNER_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: opentofu/setup-opentofu@v2
+        with:
+          tofu_wrapper: false
+      - run: tofu init -input=false
+      - name: Import the existing ruleset
+        run: |
+          id=$(gh api "repos/$GITHUB_REPOSITORY/rulesets" --jq '.[] | select(.name == "main" and .target == "branch") | .id' | head -n1)
+          if [[ -n $id ]]; then
+            tofu import -input=false github_repository_ruleset.main "${GITHUB_REPOSITORY#*/}:$id"
+          else
+            echo "No ruleset named main yet; apply will create it."
+          fi
+      - run: tofu apply -input=false -auto-approve

@@ -1,6 +1,6 @@
 # Repository settings for the monorepo, kept as code: the main branch ruleset
-# that makes auto-merge wait for CI. Apply by hand (see README.md); CI only
-# formats and validates this configuration.
+# that makes auto-merge wait for CI. Applied by
+# .github/workflows/repo-settings-apply.yml (see README.md).
 
 provider "github" {
   owner = var.owner
