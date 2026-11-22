@@ -6,10 +6,14 @@ code_review:
   # Skip LOW (style-only) findings; formatting is enforced by CI.
   comment_severity_threshold: MEDIUM
   max_review_comments: -1
+  # Reviews are requested one pull request at a time by
+  # .github/workflows/gemini-review-queue.yml, so none start on open.
   pull_request_opened:
     help: false
-    summary: true
-    code_review: true
+    summary: false
+    code_review: false
+# scripts/gemini-review-queue.mjs reads these too and skips pull requests
+# that only change matching files.
 ignore_patterns:
   - "**/*.lock"
   - "**/package-lock.json"

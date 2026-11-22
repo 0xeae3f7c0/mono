@@ -14,8 +14,14 @@ reviews:
     enabled: false
     drafts: false
     base_branches: [main]
+  # No "Review skipped" status comment on pull requests that only touch
+  # filtered paths; .github/workflows/coderabbit.yml does not request a review
+  # on those either.
+  review_status: false
   # Lockfiles and generated files are not worth reviewing line by line.
+  # .github/workflows/coderabbit.yml reads these patterns too.
   path_filters:
+    - "!**/*.lock"
     - "!**/Cargo.lock"
     - "!**/go.sum"
     - "!**/package-lock.json"
