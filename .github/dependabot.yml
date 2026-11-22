@@ -42,7 +42,9 @@ updates:
     directories: ["/", "/pkgs/*"]
     open-pull-requests-limit: 1000
     schedule:
-      interval: daily
+      # Every 3 hours, on the hour.
+      interval: cron
+      cronjob: "0 */3 * * *"
     labels: [kind/deps, lang/rust, source/dependabot]
     commit-message:
       prefix: "fix(deps)"
@@ -51,7 +53,9 @@ updates:
     directories: ["/go", "/pkgs/*"]
     open-pull-requests-limit: 1000
     schedule:
-      interval: daily
+      # Every 3 hours, on the hour.
+      interval: cron
+      cronjob: "0 */3 * * *"
     labels: [kind/deps, lang/go, source/dependabot]
     commit-message:
       prefix: "fix(deps)"
@@ -60,7 +64,9 @@ updates:
     directories: ["/pkgs/*"]
     open-pull-requests-limit: 1000
     schedule:
-      interval: daily
+      # Every 3 hours, on the hour.
+      interval: cron
+      cronjob: "0 */3 * * *"
     labels: [kind/deps, lang/python, source/dependabot]
     commit-message:
       prefix: "fix(deps)"
@@ -69,7 +75,9 @@ updates:
     directories: ["/pkgs/*"]
     open-pull-requests-limit: 1000
     schedule:
-      interval: daily
+      # Every 3 hours, on the hour.
+      interval: cron
+      cronjob: "0 */3 * * *"
     labels: [kind/deps, lang/terraform, area/infra, source/dependabot]
     commit-message:
       prefix: "build(deps)"
@@ -78,7 +86,9 @@ updates:
     directories: ["/pkgs/*", "/web/*"]
     open-pull-requests-limit: 1000
     schedule:
-      interval: daily
+      # Every 3 hours, on the hour.
+      interval: cron
+      cronjob: "0 */3 * * *"
     labels: [kind/deps, lang/js, source/dependabot]
     # Yarn projects set npmMinimalAgeGate: 3d (pkgs/portal/.yarnrc.yml) and
     # reject newer releases as "quarantined" (YN0016); wait as long before
