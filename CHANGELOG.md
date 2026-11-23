@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.6.8](https://github.com/0xeae3f7c0/mono/compare/v0.6.7...v0.6.8) (2026-11-23)
+
+
+### Bug Fixes
+
+* **ci:** track PR failures, read all workflows ([7407b52](https://github.com/0xeae3f7c0/mono/commit/7407b52334891147897acd96dad79b7dcb526e9d))
+* **deps:** update rust crate anyhow to v1.0.105 ([#276](https://github.com/0xeae3f7c0/mono/issues/276)) ([46ddce8](https://github.com/0xeae3f7c0/mono/commit/46ddce8b6709a725a3321c6f0b8208e52445cbbf))
+* **helm-render:** port to helm v4 API ([3ae7b95](https://github.com/0xeae3f7c0/mono/commit/3ae7b95620bd128859d1272d0029c4129891361d))
+
 ## [0.6.7](https://github.com/0xeae3f7c0/mono/compare/v0.6.6...v0.6.7) (2026-11-22)
 
 
