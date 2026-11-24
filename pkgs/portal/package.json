@@ -50,7 +50,7 @@
     "typescript": "~5.9.0"
   },
   "resolutions": {
-    "@yarnpkg/core": "4.9.2",
+    "@yarnpkg/core": "4.9.3",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "tar@npm:^6.1.11": "^7.5.23",
@@ -80,6 +80,6 @@
       "prettier --write"
     ]
   },
-  "packageManager": "yarn@4.18.1",
+  "packageManager": "yarn@4.19.0",
   "description": "Backstage developer portal cataloguing every service in the commit platform"
 }
