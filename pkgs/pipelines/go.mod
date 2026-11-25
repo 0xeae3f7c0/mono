@@ -5,7 +5,7 @@ go 1.27.4
 
 require (
 	github.com/stretchr/testify v1.12.1
-	go.temporal.io/sdk v1.51.0
+	go.temporal.io/sdk v1.52.0
 )
 
 require (
@@ -16,7 +16,7 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.3.4 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.22.0 // indirect
 	github.com/nexus-rpc/nexus-proto-annotations v0.1.0 // indirect
-	github.com/nexus-rpc/sdk-go v0.7.0 // indirect
+	github.com/nexus-rpc/sdk-go v0.8.0 // indirect
 	github.com/robfig/cron v1.2.0 // indirect
 	github.com/stretchr/objx v0.5.3 // indirect
 	go.temporal.io/api v1.64.3 // indirect
