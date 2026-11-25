@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.6.9](https://github.com/0xeae3f7c0/mono/compare/v0.6.8...v0.6.9) (2026-11-25)
+
+
+### Bug Fixes
+
+* **deps:** update rust crate clap to v4.6.10 ([#287](https://github.com/0xeae3f7c0/mono/issues/287)) ([6b93622](https://github.com/0xeae3f7c0/mono/commit/6b93622084e7851761d13ae9361e1861c5f5e406))
+* **deps:** update rust crate toml to v1.2.3 ([#288](https://github.com/0xeae3f7c0/mono/issues/288)) ([4197780](https://github.com/0xeae3f7c0/mono/commit/41977809adaa1d7300310d671cc1bd8e35f7cd95))
+
 ## [0.6.8](https://github.com/0xeae3f7c0/mono/compare/v0.6.7...v0.6.8) (2026-11-23)
 
 
