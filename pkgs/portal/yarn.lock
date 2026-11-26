@@ -6809,18 +6809,18 @@ __metadata:
   linkType: hard
 
 "@mui/icons-material@npm:^9.0.0":
-  version: 9.5.0
-  resolution: "@mui/icons-material@npm:9.5.0"
+  version: 9.6.0
+  resolution: "@mui/icons-material@npm:9.6.0"
   dependencies:
     "@babel/runtime": "npm:^7.29.7 || ^8.0.5"
   peerDependencies:
-    "@mui/material": ^9.5.0
+    "@mui/material": ^9.6.0
     "@types/react": ^17.0.0 || ^18.0.0 || ^19.0.0
     react: ^17.0.0 || ^18.0.0 || ^19.0.0
   peerDependenciesMeta:
     "@types/react":
       optional: true
-  checksum: 10c0/63dc16b6de0686f22f7e9b08fdd453cbeeb2439658c190b4458ffcfc616597fe4dbf1bc19183358db2083b23063155ef73caa3e4811d75ccfac2c1c711266449
+  checksum: 10c0/8f7b435faceb3b38c8a4539953bb4d584b551fe9341f9fcafa5b287c8fdd7ca4f3084e4f281aba5ab0eb1a0ea754066b49f2cf02183bbf259c654a517403928a
   languageName: node
   linkType: hard
 
