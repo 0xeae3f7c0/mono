@@ -63,7 +63,7 @@ jobs:
           config: |
             paths-ignore:
               - pkgs
-      - uses: github/codeql-action/analyze@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea # v4.39.4
+      - uses: github/codeql-action/analyze@915412ff23e8b7659517e607487dbeae018f2934 # v4.39.5
         with:
           category: /language:rust/${{ matrix.project == '.' && 'root' || matrix.project }}
 
@@ -101,6 +101,6 @@ jobs:
             (cd "$(dirname "$mod")" && go build ./...)
             echo "::endgroup::"
           done
-      - uses: github/codeql-action/analyze@1bd86f2fdb4b86187fa4059f16f31a3202acc9ea # v4.39.4
+      - uses: github/codeql-action/analyze@915412ff23e8b7659517e607487dbeae018f2934 # v4.39.5
         with:
           category: /language:${{ matrix.language }}
